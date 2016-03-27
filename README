@@ -1,0 +1,11 @@
+A simple implementation of a double-ended queue
+
+Inspired by: Donald Knuth.
+The Art of Computer Programming, Volume 1: Fundamental Algorithms
+Section 2.2.1: Stacks, Queues, and Deques, pp. 238-243.
+( third edition, Addison-Wesley, 1997. ISBN 0-201-89683-4 )
+
+License
+-------
+GNU Lesser General Public License (LGPL), version 3 or later.
+See COPYING.GPL3 and COPYING.LGPL3 for details.
