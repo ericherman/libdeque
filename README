@@ -5,6 +5,12 @@ The Art of Computer Programming, Volume 1: Fundamental Algorithms
 Section 2.2.1: Stacks, Queues, and Deques, pp. 238-243.
 ( third edition, Addison-Wesley, 1997. ISBN 0-201-89683-4 )
 
+
+Dependencies
+------------
+only the tests depend upon libecheck
+  https://github.com/ericherman/libecheck
+
 License
 -------
 GNU Lesser General Public License (LGPL), version 3 or later.
