@@ -13,9 +13,14 @@ struct deque_s *deque_new()
 	struct deque_s *d;
 
 	d = malloc(sizeof(struct deque_s));
+	if (!d) {
+		return NULL;
+	}
+
 	d->top = NULL;
 	d->bottom = NULL;
 	d->size = 0;
+
 	return d;
 }
 
