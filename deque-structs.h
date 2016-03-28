@@ -13,4 +13,6 @@ struct deque_s {
 	size_t size;
 };
 
+void deque_init(struct deque_s *d);
+
 #endif /* DEQUE_STRUCTS_H */

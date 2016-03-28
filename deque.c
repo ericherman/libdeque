@@ -8,6 +8,13 @@
 #include "deque-structs.h"
 #include <stdlib.h>
 
+void deque_init(struct deque_s *d)
+{
+	d->top = NULL;
+	d->bottom = NULL;
+	d->size = 0;
+}
+
 struct deque_s *deque_new()
 {
 	struct deque_s *d;
@@ -17,9 +24,7 @@ struct deque_s *deque_new()
 		return NULL;
 	}
 
-	d->top = NULL;
-	d->bottom = NULL;
-	d->size = 0;
+	deque_init(d);
 
 	return d;
 }
