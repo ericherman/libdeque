@@ -80,11 +80,11 @@ $(TEST): library
 	$(CC) $(TEST_OBJ) $(LDFLAGS) $(AUX_LDFLAGS) -o $(TEST)-dynamic
 
 check: $(TEST)
-	./$(TEST)-static
+	./$(TEST)-static ${TEST_OOM}
 	LD_LIBRARY_PATH=$(LD_LIBRARY_PATH) ./$(TEST)-dynamic
 
 valgrind: $(TEST)
-	valgrind ./$(TEST)-static
+	valgrind ./$(TEST)-static ${TEST_OOM}
 
 tidy:
 	$(LINDENT) \

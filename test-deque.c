@@ -58,12 +58,34 @@ int test_deque_push_pop()
 	return failures;
 }
 
-int main(void)
-{				/* int argc, char *argv[]) */
+int test_out_of_memory()
+{
 	int failures = 0;
+	struct deque_s *deque;
+	struct deque_s *rv;
+
+	deque = deque_new();
+
+	while ((rv = deque_push(deque, NULL)) != NULL) ;
+
+	rv = deque_push(deque, NULL);
+	failures += check_ptr(rv, NULL);
+
+	deque_free(deque);
+	return failures;
+}
+
+int main(int argc, char **argv)
+{
+	int failures = 0;
+	int test_oom = (argc > 1) ? atoi(argv[1]) : 0;
 
 	failures += test_deque_new();
 	failures += test_deque_push_pop();
+
+	if (test_oom) {
+		failures += test_out_of_memory();
+	}
 
 	if (failures) {
 		fprintf(stderr, "%d failures in total\n", failures);
