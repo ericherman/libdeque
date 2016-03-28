@@ -5,19 +5,8 @@
    ( third edition, Addison-Wesley, 1997. ISBN 0-201-89683-4 )
 */
 #include "deque.h"
+#include "deque-structs.h"
 #include <stdlib.h>
-
-struct deque_element_s {
-	struct deque_element_s *above;
-	struct deque_element_s *below;
-	void *data;
-};
-
-struct deque_s {
-	struct deque_element_s *top;
-	struct deque_element_s *bottom;
-	size_t size;
-};
 
 struct deque_s *deque_new()
 {
