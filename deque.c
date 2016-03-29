@@ -85,14 +85,13 @@ struct deque_s *deque_push(struct deque_s *d, void *data)
 	e->above = NULL;
 
 	if (d->size == 0) {
-		d->top = e;
 		d->bottom = e;
 		e->below = NULL;
 	} else {
 		e->below = d->top;
 		d->top->above = e;
-		d->top = e;
 	}
+	d->top = e;
 	++d->size;
 	return d;
 }
@@ -132,13 +131,12 @@ struct deque_s *deque_unshift(struct deque_s *d, void *data)
 
 	if (d->size == 0) {
 		d->top = e;
-		d->bottom = e;
 		e->above = NULL;
 	} else {
 		e->above = d->bottom;
 		d->bottom->below = e;
-		d->bottom = e;
 	}
+	d->bottom = e;
 	++d->size;
 	return d;
 }
