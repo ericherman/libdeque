@@ -7,24 +7,45 @@
 #include "deque.h"
 #include "deque-structs.h"
 #include <stdlib.h>
+#include <assert.h>
 
-void deque_init(struct deque_s *d)
+void *deque_memalloc(size_t size, void *context)
+{
+	assert(context == NULL);
+	return malloc(size);
+}
+
+void deque_memfree(void *ptr, size_t size, void *context)
+{
+	assert(size != 0);
+	assert(context == NULL);
+	free(ptr);
+}
+
+void deque_init(struct deque_s *d, deque_malloc a, deque_mfree f, void *context)
 {
 	d->top = NULL;
 	d->bottom = NULL;
 	d->size = 0;
+
+	d->mem_alloc = a ? a : deque_memalloc;
+	d->mem_free = f ? f : deque_memfree;
+	d->mem_context = context;
 }
 
 struct deque_s *deque_new()
 {
 	struct deque_s *d;
+	void *mem_context;
 
-	d = malloc(sizeof(struct deque_s));
+	mem_context = NULL;
+
+	d = deque_memalloc(sizeof(struct deque_s), mem_context);
 	if (!d) {
 		return NULL;
 	}
 
-	deque_init(d);
+	deque_init(d, deque_memalloc, deque_memfree, mem_context);
 
 	return d;
 }
@@ -34,7 +55,7 @@ void deque_free(struct deque_s *d)
 	while (d->top) {
 		deque_pop(d);
 	}
-	free(d);
+	d->mem_free(d, sizeof(struct deque_s), d->mem_context);
 }
 
 void *deque_top(struct deque_s *d)
@@ -56,7 +77,7 @@ struct deque_s *deque_push(struct deque_s *d, void *data)
 {
 	struct deque_element_s *e;
 
-	e = malloc(sizeof(struct deque_element_s));
+	e = d->mem_alloc(sizeof(struct deque_element_s), d->mem_context);
 	if (!e) {
 		return NULL;
 	}
@@ -93,7 +114,7 @@ void *deque_pop(struct deque_s *d)
 	} else {
 		d->top = freeme->below;
 	}
-	free(freeme);
+	d->mem_free(freeme, sizeof(struct deque_element_s), d->mem_context);
 	--d->size;
 	return data;
 }
@@ -102,7 +123,7 @@ struct deque_s *deque_unshift(struct deque_s *d, void *data)
 {
 	struct deque_element_s *e;
 
-	e = malloc(sizeof(struct deque_element_s));
+	e = d->mem_alloc(sizeof(struct deque_element_s), d->mem_context);
 	if (!e) {
 		return NULL;
 	}
@@ -135,7 +156,7 @@ void *deque_shift(struct deque_s *d)
 	} else {
 		d->bottom = freeme->above;
 	}
-	free(freeme);
+	d->mem_free(freeme, sizeof(struct deque_element_s), d->mem_context);
 	--d->size;
 	return data;
 }
