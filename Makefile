@@ -31,6 +31,9 @@ INCLUDES=-I.
 TEST_SRC=test-$(LIB_NAME).c
 TEST_OBJ=test-$(LIB_NAME).o
 TEST=test-$(LIB_NAME)
+TEST2_SRC=test-$(LIB_NAME)-2.c
+TEST2_OBJ=test-$(LIB_NAME)-2.o
+TEST2=test-$(LIB_NAME)-2
 
 CSTD_CFLAGS=-std=c89
 DEBUG_CFLAGS=-ggdb -O0
@@ -78,9 +81,13 @@ $(TEST): library
 		$(TEST_SRC) -o $(TEST_OBJ)
 	$(CC) $(TEST_OBJ) $(A_NAME) $(AUX_A_FILES) -o $(TEST)-static
 	$(CC) $(TEST_OBJ) $(LDFLAGS) $(AUX_LDFLAGS) -o $(TEST)-dynamic
+	$(CC) -c $(INCLUDES) $(AUX_INCLUDES) $(CFLAGS) \
+		$(TEST2_SRC) -o $(TEST2_OBJ)
+	$(CC) $(TEST2_OBJ) $(A_NAME) $(AUX_A_FILES) -o $(TEST2)-static
 
 check: $(TEST)
 	./$(TEST)-static ${TEST_OOM}
+	./$(TEST2)-static
 	LD_LIBRARY_PATH=$(LD_LIBRARY_PATH) ./$(TEST)-dynamic
 
 valgrind: $(TEST)
