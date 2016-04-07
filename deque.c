@@ -9,73 +9,50 @@
 #include <stdlib.h>
 #include <assert.h>
 
-void *deque_memalloc(size_t size, void *context)
+static void *deque_memalloc(size_t size, void *context)
 {
 	assert(context == NULL);
 	return malloc(size);
 }
 
-void deque_memfree(void *ptr, size_t size, void *context)
+static void deque_memfree(void *ptr, size_t size, void *context)
 {
 	assert(size != 0);
 	assert(context == NULL);
 	free(ptr);
 }
 
-void deque_init(struct deque_s *d, deque_malloc a, deque_mfree f, void *context)
+static void *deque_top(struct deque_s *deque)
 {
-	d->top = NULL;
-	d->bottom = NULL;
-	d->size = 0;
+	struct deque_data_s *d;
 
-	d->mem_alloc = a ? a : deque_memalloc;
-	d->mem_free = f ? f : deque_memfree;
-	d->mem_context = context;
-}
+	d = deque->data;
 
-struct deque_s *deque_new()
-{
-	struct deque_s *d;
-	void *mem_context;
-
-	mem_context = NULL;
-
-	d = deque_memalloc(sizeof(struct deque_s), mem_context);
-	if (!d) {
-		return NULL;
-	}
-
-	deque_init(d, deque_memalloc, deque_memfree, mem_context);
-
-	return d;
-}
-
-void deque_free(struct deque_s *d)
-{
-	while (d->top) {
-		deque_pop(d);
-	}
-	d->mem_free(d, sizeof(struct deque_s), d->mem_context);
-}
-
-void *deque_top(struct deque_s *d)
-{
 	return d->top ? d->top->data : NULL;
 }
 
-void *deque_bottom(struct deque_s *d)
+static void *deque_bottom(struct deque_s *deque)
 {
+	struct deque_data_s *d;
+
+	d = deque->data;
 	return d->bottom ? d->bottom->data : NULL;
 }
 
-size_t deque_size(struct deque_s *d)
+static size_t deque_size(struct deque_s *deque)
 {
+	struct deque_data_s *d;
+
+	d = deque->data;
 	return d->size;
 }
 
-struct deque_s *deque_push(struct deque_s *d, void *data)
+static struct deque_s *deque_push(struct deque_s *deque, void *data)
 {
+	struct deque_data_s *d;
 	struct deque_element_s *e;
+
+	d = deque->data;
 
 	e = d->mem_alloc(sizeof(struct deque_element_s), d->mem_context);
 	if (!e) {
@@ -93,13 +70,16 @@ struct deque_s *deque_push(struct deque_s *d, void *data)
 	}
 	d->top = e;
 	++d->size;
-	return d;
+	return deque;
 }
 
-void *deque_pop(struct deque_s *d)
+static void *deque_pop(struct deque_s *deque)
 {
+	struct deque_data_s *d;
 	struct deque_element_s *freeme;
 	void *data;
+
+	d = deque->data;
 
 	if (d->size == 0) {
 		return NULL;
@@ -118,10 +98,12 @@ void *deque_pop(struct deque_s *d)
 	return data;
 }
 
-struct deque_s *deque_unshift(struct deque_s *d, void *data)
+static struct deque_s *deque_unshift(struct deque_s *deque, void *data)
 {
+	struct deque_data_s *d;
 	struct deque_element_s *e;
 
+	d = deque->data;
 	e = d->mem_alloc(sizeof(struct deque_element_s), d->mem_context);
 	if (!e) {
 		return NULL;
@@ -138,14 +120,16 @@ struct deque_s *deque_unshift(struct deque_s *d, void *data)
 	}
 	d->bottom = e;
 	++d->size;
-	return d;
+	return deque;
 }
 
-void *deque_shift(struct deque_s *d)
+static void *deque_shift(struct deque_s *deque)
 {
+	struct deque_data_s *d;
 	void *data;
 	struct deque_element_s *freeme;
 
+	d = deque->data;
 	freeme = d->bottom;
 	data = freeme->data;
 	if (d->top == freeme) {
@@ -157,4 +141,66 @@ void *deque_shift(struct deque_s *d)
 	d->mem_free(freeme, sizeof(struct deque_element_s), d->mem_context);
 	--d->size;
 	return data;
+}
+
+struct deque_s *deque_init(struct deque_s *deque, deque_malloc_func a,
+			   deque_free_func f, void *mem_context)
+{
+	struct deque_data_s *d;
+
+	deque->push = deque_push;
+	deque->pop = deque_pop;
+	deque->unshift = deque_unshift;
+	deque->shift = deque_shift;
+	deque->top = deque_top;
+	deque->bottom = deque_bottom;
+	deque->size = deque_size;
+
+	if (!a) {
+		a = deque_memalloc;
+	}
+	d = a(sizeof(struct deque_data_s), mem_context);
+	if (!d) {
+		deque_memfree(deque, sizeof(struct deque_s), mem_context);
+		return NULL;
+	}
+
+	d->top = NULL;
+	d->bottom = NULL;
+	d->size = 0;
+
+	d->mem_alloc = a;
+	d->mem_free = f ? f : deque_memfree;
+	d->mem_context = mem_context;
+
+	deque->data = d;
+
+	return deque;
+}
+
+struct deque_s *deque_new()
+{
+	struct deque_s *deque;
+	void *mem_context;
+
+	mem_context = NULL;
+
+	deque = deque_memalloc(sizeof(struct deque_s), mem_context);
+	if (!deque) {
+		return NULL;
+	}
+
+	return deque_init(deque, deque_memalloc, deque_memfree, mem_context);
+}
+
+void deque_free(struct deque_s *deque)
+{
+	struct deque_data_s *d;
+
+	d = deque->data;
+	while (d->top) {
+		deque_pop(deque);
+	}
+	d->mem_free(deque, sizeof(struct deque_s), d->mem_context);
+	d->mem_free(d, sizeof(struct deque_data_s), d->mem_context);
 }

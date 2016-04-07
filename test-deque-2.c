@@ -41,37 +41,38 @@ int test_deque_custom_allocator()
 	deque = test_malloc(sizeof(struct deque_s), &ctx);
 	++allocs;
 	deque_init(deque, test_malloc, test_free, &ctx);
-
-	failures += check_size_t_m(deque_size(deque), 0, "initial size");
-
-	failures += check_ptr_m(deque_pop(deque), NULL, "pop size 0");
-
-	deque_push(deque, "one");
-	++allocs;
-	deque_push(deque, "two");
-	++allocs;
-	deque_push(deque, "three");
 	++allocs;
 
-	failures += check_size_t_m(deque_size(deque), 3, "size A");
+	failures += check_size_t_m(deque->size(deque), 0, "initial size");
 
-	deque_unshift(deque, "zero");
+	failures += check_ptr_m(deque->pop(deque), NULL, "pop size 0");
+
+	deque->push(deque, "one");
+	++allocs;
+	deque->push(deque, "two");
+	++allocs;
+	deque->push(deque, "three");
 	++allocs;
 
-	failures += check_size_t_m(deque_size(deque), 4, "size B");
+	failures += check_size_t_m(deque->size(deque), 3, "size A");
 
-	failures += check_str_m((char *)deque_pop(deque), "three", "pop1");
-
-	deque_push(deque, "four");
+	deque->unshift(deque, "zero");
 	++allocs;
 
-	failures += check_str_m((char *)deque_shift(deque), "zero", "shift1");
-	failures += check_str_m((char *)deque_shift(deque), "one", "shift2");
+	failures += check_size_t_m(deque->size(deque), 4, "size B");
 
-	failures += check_str_m((char *)deque_pop(deque), "four", "pop2");
-	failures += check_str_m((char *)deque_pop(deque), "two", "pop3");
+	failures += check_str_m((char *)deque->pop(deque), "three", "pop1");
 
-	failures += check_size_t_m(deque_size(deque), 0, "size C");
+	deque->push(deque, "four");
+	++allocs;
+
+	failures += check_str_m((char *)deque->shift(deque), "zero", "shift1");
+	failures += check_str_m((char *)deque->shift(deque), "one", "shift2");
+
+	failures += check_str_m((char *)deque->pop(deque), "four", "pop2");
+	failures += check_str_m((char *)deque->pop(deque), "two", "pop3");
+
+	failures += check_size_t_m(deque->size(deque), 0, "size C");
 
 	deque_free(deque);
 
