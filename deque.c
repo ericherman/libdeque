@@ -5,9 +5,24 @@
    ( third edition, Addison-Wesley, 1997. ISBN 0-201-89683-4 )
 */
 #include "deque.h"
-#include "deque-structs.h"
 #include <stdlib.h>
 #include <assert.h>
+
+struct deque_element_s {
+	struct deque_element_s *above;
+	struct deque_element_s *below;
+	void *data;
+};
+
+struct deque_data_s {
+	struct deque_element_s *top;
+	struct deque_element_s *bottom;
+	size_t size;
+
+	deque_malloc_func mem_alloc;
+	deque_free_func mem_free;
+	void *mem_context;
+};
 
 static void *deque_memalloc(size_t size, void *context)
 {
@@ -143,10 +158,19 @@ static void *deque_shift(struct deque_s *deque)
 	return data;
 }
 
-struct deque_s *deque_init(struct deque_s *deque, deque_malloc_func a,
-			   deque_free_func f, void *mem_context)
+struct deque_s *deque_new(deque_malloc_func a, deque_free_func f,
+			  void *mem_context)
 {
+	struct deque_s *deque;
 	struct deque_data_s *d;
+
+	if (!a) {
+		a = deque_memalloc;
+	}
+	deque = a(sizeof(struct deque_s), mem_context);
+	if (!deque) {
+		return NULL;
+	}
 
 	deque->push = deque_push;
 	deque->pop = deque_pop;
@@ -156,9 +180,6 @@ struct deque_s *deque_init(struct deque_s *deque, deque_malloc_func a,
 	deque->bottom = deque_bottom;
 	deque->size = deque_size;
 
-	if (!a) {
-		a = deque_memalloc;
-	}
 	d = a(sizeof(struct deque_data_s), mem_context);
 	if (!d) {
 		deque_memfree(deque, sizeof(struct deque_s), mem_context);
@@ -176,21 +197,6 @@ struct deque_s *deque_init(struct deque_s *deque, deque_malloc_func a,
 	deque->data = d;
 
 	return deque;
-}
-
-struct deque_s *deque_new()
-{
-	struct deque_s *deque;
-	void *mem_context;
-
-	mem_context = NULL;
-
-	deque = deque_memalloc(sizeof(struct deque_s), mem_context);
-	if (!deque) {
-		return NULL;
-	}
-
-	return deque_init(deque, deque_memalloc, deque_memfree, mem_context);
 }
 
 void deque_free(struct deque_s *deque)

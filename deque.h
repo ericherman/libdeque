@@ -11,6 +11,9 @@
 
 #include <stddef.h>		/* size_t */
 
+typedef void *(*deque_malloc_func) (size_t size, void *context);
+typedef void (*deque_free_func) (void *ptr, size_t size, void *context);
+
 struct deque_s {
 	void *data;
 
@@ -26,7 +29,8 @@ struct deque_s {
 	size_t (*size) (struct deque_s * d);
 };
 
-struct deque_s *deque_new();
+struct deque_s *deque_new(deque_malloc_func mfunc, deque_free_func mfree,
+			  void *mcontext);
 void deque_free(struct deque_s *d);
 
 #endif /* DEQUE_H */
