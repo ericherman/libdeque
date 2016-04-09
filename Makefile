@@ -90,6 +90,7 @@ tidy:
 	$(LINDENT) \
 		-T FILE \
 		-T size_t \
+		-T deque_s \
 		*.h *.c
 
 clean:

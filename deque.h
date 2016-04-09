@@ -14,16 +14,16 @@
 struct deque_s {
 	void *data;
 
-	struct deque_s *(*push) (struct deque_s * d, void *data);
-	void *(*pop) (struct deque_s * d);
+	struct deque_s *(*push) (struct deque_s *d, void *data);
+	void *(*pop) (struct deque_s *d);
 
-	struct deque_s *(*unshift) (struct deque_s * d, void *data);
-	void *(*shift) (struct deque_s * d);
+	struct deque_s *(*unshift) (struct deque_s *d, void *data);
+	void *(*shift) (struct deque_s *d);
 
-	void *(*top) (struct deque_s * d);
-	void *(*bottom) (struct deque_s * d);
+	void *(*top) (struct deque_s *d);
+	void *(*bottom) (struct deque_s *d);
 
-	size_t (*size) (struct deque_s * d);
+	size_t (*size) (struct deque_s *d);
 };
 
 typedef void *(*deque_malloc_func) (size_t size, void *context);
