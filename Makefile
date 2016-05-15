@@ -2,7 +2,8 @@ LIB_NAME=deque
 
 AUX_INCLUDES=-I ../libecheck
 AUX_A_FILES=../libecheck/libecheck.a
-AUX_LDFLAGS=-L../libecheck -lecheck
+AUX_LDFLAGS=-L../libecheck
+AUX_LDADD=-lecheck
 AUX_LD_LIBRARY_PATHS=:../libecheck
 
 
@@ -38,7 +39,8 @@ DEBUG_CFLAGS=-ggdb -O3 -DNDEBUG -Wno-unused-parameter
 NOISY_CFLAGS=-Wall -Wextra -pedantic -Werror
 
 CFLAGS += $(CSTD_CFLAGS) $(DEBUG_CFLAGS) $(NOISY_CFLAGS)
-LDFLAGS += -L. -l$(LIB_NAME)
+LDFLAGS += -L.
+LDADD += -l$(LIB_NAME)
 CC=gcc
 
 ifeq ("$(PREFIX)", "")
@@ -77,7 +79,8 @@ $(TEST): library
 	$(CC) -c $(INCLUDES) $(AUX_INCLUDES) $(CFLAGS) \
 		$(TEST_SRC) -o $(TEST_OBJ)
 	$(CC) $(TEST_OBJ) $(A_NAME) $(AUX_A_FILES) -o $(TEST)-static
-	$(CC) $(TEST_OBJ) $(LDFLAGS) $(AUX_LDFLAGS) -o $(TEST)-dynamic
+	$(CC) $(LDFLAGS) $(TEST_OBJ) $(AUX_LDFLAGS) -o $(TEST)-dynamic \
+		$(LDADD) $(AUX_LDADD)
 
 check: $(TEST)
 	./$(TEST)-static ${TEST_OOM}
