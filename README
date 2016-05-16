@@ -11,6 +11,25 @@ Dependencies
 only the tests depend upon libecheck
   https://github.com/ericherman/libecheck
 
+
+Building on linux from a release tar
+--------
+tar xfz /path/to/libdeque-$VERSION.tar.gz
+cd libdeque-*
+./configure && make && make check
+sudo make install
+sudo ldconfig
+
+
+Packaging
+---------
+autoreconf -iv &&
+ ./configure &&
+ make &&
+ make distcheck &&
+ echo "Success."
+
+
 License
 -------
 GNU Lesser General Public License (LGPL), version 3 or later.
