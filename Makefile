@@ -1,10 +1,11 @@
 LIB_NAME=deque
 
-AUX_INCLUDES=-I ../libecheck
-AUX_A_FILES=../libecheck/libecheck.a
-AUX_LDFLAGS=-L../libecheck
 AUX_LDADD=-lecheck
-AUX_LD_LIBRARY_PATHS=:../libecheck
+
+AUX_INCLUDES=
+AUX_A_FILES=
+AUX_LDFLAGS=
+AUX_LD_LIBRARY_PATHS=
 
 
 UNAME := $(shell uname)
@@ -78,7 +79,8 @@ library: $(SO_NAME) $(A_NAME)
 $(TEST): library
 	$(CC) -c $(INCLUDES) $(AUX_INCLUDES) $(CFLAGS) \
 		$(TEST_SRC) -o $(TEST_OBJ)
-	$(CC) $(TEST_OBJ) $(A_NAME) $(AUX_A_FILES) -o $(TEST)-static
+	$(CC) $(TEST_OBJ) $(A_NAME) $(AUX_A_FILES) -o $(TEST)-static \
+		$(AUX_LDADD)
 	$(CC) $(LDFLAGS) $(TEST_OBJ) $(AUX_LDFLAGS) -o $(TEST)-dynamic \
 		$(LDADD) $(AUX_LDADD)
 
