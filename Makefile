@@ -18,10 +18,10 @@ SHAREDFLAGS = -shared
 SHAREDEXT = so
 endif
 
-LIB_SRC=$(LIB_NAME).c
-LIB_HDR=$(LIB_NAME).h
+LIB_SRC=src/$(LIB_NAME).c
+LIB_HDR=src/$(LIB_NAME).h
 LIB_OBJ=$(LIB_SRC:.c=.o)
-SO_OBJS=$(LIB_NAME).o
+SO_OBJS=src/$(LIB_NAME).o
 SO_NAME=lib$(LIB_NAME).$(SHAREDEXT)
 ifneq ($(UNAME), Darwin)
     SHAREDFLAGS += -Wl,-soname,$(SO_NAME)
@@ -29,8 +29,8 @@ endif
 
 A_NAME=lib$(LIB_NAME).a
 
-INCLUDES=-I.
-TEST_SRC=test-$(LIB_NAME).c
+INCLUDES=-I. -I./src
+TEST_SRC=tests/test-$(LIB_NAME).c
 TEST_OBJ=test-$(LIB_NAME).o
 TEST=test-$(LIB_NAME)
 
@@ -96,15 +96,17 @@ tidy:
 		-T FILE \
 		-T size_t \
 		-T deque_s \
-		*.h *.c
+		`find . -name *.h -o -name *.c`
 
 clean:
 	rm -f *.o *.a *.$(SHAREDEXT) \
 		$(SO_NAME).* \
 		$(TEST)-static $(TEST)-dynamic demo-deque
 
-spotless: clean
+spotless:
 	rm -rf `cat .gitignore`
+	( cd src && rm -rf `cat ../.gitignore` && cd .. )
+	( cd tests && rm -rf `cat ../.gitignore` && cd .. )
 
 install: library
 	@echo "Installing libraries in $(LIBDIR)"
