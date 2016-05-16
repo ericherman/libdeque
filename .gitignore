@@ -18,8 +18,14 @@ $*
 *.a
 *.bin
 *.d
+*.la
+*.lo
+*.log
+*.trs
 test-*-dynamic
 test-*-static
+test-deque
+libdeque-*.tar.*
 
 ################
 # autoreconf files
@@ -43,3 +49,5 @@ config.status
 libtool
 .deps/
 stamp-h1
+.libs/
+.dirstamp
