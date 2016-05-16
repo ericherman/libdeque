@@ -28,4 +28,4 @@ spotless:
 	( pushd tests; rm -rf `cat ../.gitignore`; popd )
 
 valgrind: test-deque
-        valgrind ./test-deque 0
+	 valgrind ./test-deque 0
