@@ -10,7 +10,9 @@ test_deque_LDADD=libdeque.la -lecheck
 
 ACLOCAL_AMFLAGS=-I m4 --install
 
-AM_CFLAGS=-std=c89 -O3 -ggdb -Wall -Wextra -Wpedantic -Werror
+#OPTIMIZE_FLAGS=-ggdb -O0
+OPTIMIZE_FLAGS=-ggdb -O3 -DNDEBUG -Wno-unused-parameter
+AM_CFLAGS=-std=c89 -Wall -Wextra -Wpedantic -Werror $(OPTIMIZE_FLAGS)
 
 # extracted from https://github.com/torvalds/linux/blob/master/scripts/Lindent
 LINDENT=indent -npro -kr -i8 -ts8 -sob -l80 -ss -ncs -cp1 -il0
