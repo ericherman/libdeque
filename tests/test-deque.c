@@ -2,7 +2,7 @@
 #include <stdio.h>		/* fprintf */
 #include <string.h>		/* strlen */
 
-#include "deque.h"
+#include "../src/deque.h"
 
 int test_deque_new()
 {
