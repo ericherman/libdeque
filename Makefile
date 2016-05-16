@@ -103,6 +103,9 @@ clean:
 		$(SO_NAME).* \
 		$(TEST)-static $(TEST)-dynamic demo-deque
 
+spotless: clean
+	rm -rf `cat .gitignore`
+
 install: library
 	@echo "Installing libraries in $(LIBDIR)"
 	mkdir -pv $(LIBDIR)
