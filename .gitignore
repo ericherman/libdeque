@@ -32,3 +32,14 @@ build-aux/
 config.h.in
 configure
 m4/
+
+################
+# ./configure output
+################
+Makefile
+config.h
+config.log
+config.status
+libtool
+.deps/
+stamp-h1
