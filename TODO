@@ -1,0 +1,3 @@
+libdeque TODO:
+
+* autotools parameterize run/skip the test-out-of-memoroy based

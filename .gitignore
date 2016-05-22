@@ -22,10 +22,14 @@ $*
 *.lo
 *.log
 *.trs
+*.tar.*
 test-*-dynamic
 test-*-static
 test-deque
-libdeque-*.tar.*
+test-custom-allocator
+test-deque-new
+test-out-of-memory
+test-push-pop
 
 ################
 # autoreconf files

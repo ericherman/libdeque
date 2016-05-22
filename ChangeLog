@@ -1,3 +1,17 @@
+2016-05-22  Eric Herman <eric@freesa.org>
+
+	* Makefile.am: split tests into separate files
+			improve "spotless" and "valgrind" targets
+	* configure.ac: bump to version 1.0.1-dev
+	* tests/test-deque.c:            removed monolithic test
+	* tests/test-deque-new.c:        extracted from test-deque.c
+	* tests/test-custom-allocator.c: extracted from test-deque.c
+	* tests/test-push-pop.c:         extracted from test-deque.c
+	* tests/test-out-of-memory.c:    extracted from test-deque.c
+	* .gitignore: add new test outputs
+	* TODO: make skip of test-OOM optional
+
+
 2016-05-16  Eric Herman <eric@freesa.org>
 
 	Initial Release v1.0.0

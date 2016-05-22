@@ -4,9 +4,25 @@ libdeque_la_SOURCES=src/deque.c
 include_HEADERS=src/deque.h
 
 TESTS=$(check_PROGRAMS)
-check_PROGRAMS=test-deque
-test_deque_SOURCES=tests/test-deque.c src/deque.h
-test_deque_LDADD=libdeque.la -lecheck
+check_PROGRAMS=\
+ test-deque-new \
+ test-push-pop \
+ test-custom-allocator \
+ test-out-of-memory
+
+T_LDADD=libdeque.la -lecheck
+
+test_deque_new_SOURCES=tests/test-deque-new.c src/deque.h
+test_deque_new_LDADD=$(T_LDADD)
+
+test_push_pop_SOURCES=tests/test-push-pop.c src/deque.h
+test_push_pop_LDADD=$(T_LDADD)
+
+test_custom_allocator_SOURCES=tests/test-custom-allocator.c src/deque.h
+test_custom_allocator_LDADD=$(T_LDADD)
+
+test_out_of_memory_SOURCES=tests/test-out-of-memory.c src/deque.h
+test_out_of_memory_LDADD=$(T_LDADD)
 
 ACLOCAL_AMFLAGS=-I m4 --install
 
@@ -25,9 +41,11 @@ tidy:
 		`find src tests -name '*.h' -o -name '*.c'`
 
 spotless:
-	rm -rf `cat .gitignore`
-	( pushd src; rm -rf `cat ../.gitignore`; popd )
-	( pushd tests; rm -rf `cat ../.gitignore`; popd )
+	rm -rf `cat .gitignore | sed -e 's/#.*//'`
+	pushd src && rm -rf `cat ../.gitignore | sed -e 's/#.*//'` && popd
+	pushd tests && rm -rf `cat ../.gitignore | sed -e 's/#.*//'` && popd
 
-valgrind: test-deque
-	 valgrind ./test-deque 0
+valgrind: $(check_PROGRAMS)
+	libtool --mode=execute valgrind ./test-deque-new
+	libtool --mode=execute valgrind ./test-push-pop
+	libtool --mode=execute valgrind ./test-custom-allocator
