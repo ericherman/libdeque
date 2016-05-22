@@ -93,5 +93,5 @@ int main()
 	if (failures) {
 		fprintf(stderr, "%d failures in %s\n", failures, __FILE__);
 	}
-	return failures;
+	return ((failures > 127) ? 127 : ((failures < -128) ? -128 : failures));
 }

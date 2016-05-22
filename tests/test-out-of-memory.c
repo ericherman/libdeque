@@ -35,5 +35,5 @@ int main(int argc, char **argv)
 	if (failures) {
 		fprintf(stderr, "%d failures in total\n", failures);
 	}
-	return failures;
+	return ((failures > 127) ? 127 : ((failures < -128) ? -128 : failures));
 }

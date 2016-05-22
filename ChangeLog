@@ -1,5 +1,8 @@
 2016-05-22  Eric Herman <eric@freesa.org>
 
+	split test-deque into separtate tests,
+	avoid out-of-range exit codes
+
 	* Makefile.am: split tests into separate files
 			improve "spotless" and "valgrind" targets
 	* configure.ac: bump to version 1.0.1-dev
