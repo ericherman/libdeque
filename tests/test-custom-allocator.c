@@ -1,7 +1,4 @@
-#include <echeck.h>
-#include <stdio.h>		/* fprintf */
-
-#include "deque.h"
+#include "test-deque.h"
 
 struct mem_context {
 	unsigned allocs;
@@ -84,14 +81,4 @@ int test_deque_custom_allocator()
 	return failures;
 }
 
-int main()
-{
-	int failures = 0;
-
-	failures += test_deque_custom_allocator();
-
-	if (failures) {
-		fprintf(stderr, "%d failures in %s\n", failures, __FILE__);
-	}
-	return ((failures > 127) ? 127 : ((failures < -128) ? -128 : failures));
-}
+TEST_DEQUE_MAIN(test_deque_custom_allocator())

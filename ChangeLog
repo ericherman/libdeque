@@ -1,3 +1,13 @@
+2016-06-07  Eric Herman <eric@freesa.org>
+
+	* tests/test-deque.h: consolidate duplicaton from test main() functions
+	* Makefile.am: add new .h file to tests
+	* tests/test-custom-allocator.c: use TEST_DEQUE_MAIN macro
+	* tests/test-deque-new.c: same
+	* tests/test-out-of-memory.c: same
+	* tests/test-push-pop.c:s same
+
+
 2016-05-22  Eric Herman <eric@freesa.org>
 
 	split test-deque into separtate tests,

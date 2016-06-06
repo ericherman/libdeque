@@ -1,6 +1,4 @@
-#include <stdio.h>
-#include <echeck.h>
-#include "deque.h"
+#include "test-deque.h"
 
 int test_deque_new()
 {
@@ -19,14 +17,4 @@ int test_deque_new()
 	return failures;
 }
 
-int main(void)
-{
-	int failures = 0;
-
-	failures += test_deque_new();
-
-	if (failures) {
-		fprintf(stderr, "%d failures in %s\n", failures, __FILE__);
-	}
-	return ((failures > 127) ? 127 : ((failures < -128) ? -128 : failures));
-}
+TEST_DEQUE_MAIN(test_deque_new())

@@ -1,7 +1,4 @@
-#include <echeck.h>
-#include <stdio.h>		/* fprintf */
-
-#include "deque.h"
+#include "test-deque.h"
 
 int test_out_of_memory(void)
 {
@@ -21,19 +18,4 @@ int test_out_of_memory(void)
 	return failures;
 }
 
-int main(int argc, char **argv)
-{
-	int failures = 0;
-	int test_oom = (argc > 1) ? atoi(argv[1]) : 0;
-
-	if (test_oom) {
-		failures += test_out_of_memory();
-	} else {
-		fprintf(stderr, "skipping test_out_of_memory()\n");
-	}
-
-	if (failures) {
-		fprintf(stderr, "%d failures in total\n", failures);
-	}
-	return ((failures > 127) ? 127 : ((failures < -128) ? -128 : failures));
-}
+TEST_DEQUE_MAIN_IF((argc > 1) ? atoi(argv[1]) : 0, test_out_of_memory())
