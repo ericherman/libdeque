@@ -48,6 +48,6 @@ spotless:
 	pushd tests && rm -rf `cat ../.gitignore | sed -e 's/#.*//'` && popd
 
 valgrind: $(check_PROGRAMS)
-	libtool --mode=execute valgrind ./test-deque-new
-	libtool --mode=execute valgrind ./test-push-pop
-	libtool --mode=execute valgrind ./test-custom-allocator
+	libtool --mode=execute valgrind -q ./test-deque-new
+	libtool --mode=execute valgrind -q ./test-push-pop
+	libtool --mode=execute valgrind -q ./test-custom-allocator

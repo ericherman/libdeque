@@ -1,5 +1,6 @@
 2016-06-07  Eric Herman <eric@freesa.org>
 
+	* Makefile.am: reduce valgrind verbosity
 	* tests/test-deque.h: consolidate duplicaton from test main() functions
 	* Makefile.am: add new .h file to tests
 	* tests/test-custom-allocator.c: use TEST_DEQUE_MAIN macro
