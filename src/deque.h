@@ -9,6 +9,10 @@
    ( third edition, Addison-Wesley, 1997. ISBN 0-201-89683-4 )
 */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stddef.h>		/* size_t */
 
 struct deque_s {
@@ -33,5 +37,9 @@ struct deque_s *deque_new(deque_malloc_func mfunc, deque_free_func mfree,
 			  void *mcontext);
 
 void deque_free(struct deque_s *d);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* DEQUE_H */

@@ -1,3 +1,9 @@
+2016-06-13  Eric Herman <eric@freesa.org>
+
+	* src/deque.h: make nice for c++
+	* pre-tidy.patch: comment out block before running indent
+	* Makefile.am: update "make tidy"
+
 2016-06-07  Eric Herman <eric@freesa.org>
 
 	* Makefile.am: reduce valgrind verbosity
