@@ -32,7 +32,7 @@ ACLOCAL_AMFLAGS=-I m4 --install
 OPTIMIZE_FLAGS=-ggdb -O3 -DNDEBUG -Wno-unused-parameter
 AM_CFLAGS=-std=c89 -Wall -Wextra -Wpedantic -Werror $(OPTIMIZE_FLAGS)
 
-EXTRA_DIST=misc/pre-tidy.patch
+EXTRA_DIST=misc
 
 # extracted from https://github.com/torvalds/linux/blob/master/scripts/Lindent
 LINDENT=indent -npro -kr -i8 -ts8 -sob -l80 -ss -ncs -cp1 -il0

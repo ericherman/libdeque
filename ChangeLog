@@ -1,5 +1,6 @@
 2016-06-15  Eric Herman <eric@freesa.org>
 
+	* COPYING: link to lincense files in misc/
 	* misc/pre-tidy.patch: move from root dir
 	* Makefile.am: reflect move
 
