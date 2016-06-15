@@ -32,17 +32,19 @@ ACLOCAL_AMFLAGS=-I m4 --install
 OPTIMIZE_FLAGS=-ggdb -O3 -DNDEBUG -Wno-unused-parameter
 AM_CFLAGS=-std=c89 -Wall -Wextra -Wpedantic -Werror $(OPTIMIZE_FLAGS)
 
+EXTRA_DIST=misc/pre-tidy.patch
+
 # extracted from https://github.com/torvalds/linux/blob/master/scripts/Lindent
 LINDENT=indent -npro -kr -i8 -ts8 -sob -l80 -ss -ncs -cp1 -il0
 
 tidy:
-	patch -Np1 -i ./pre-tidy.patch
+	patch -Np1 -i misc/pre-tidy.patch
 	$(LINDENT) \
 		-T FILE \
 		-T size_t \
 		-T deque_s \
 		`find src tests -name '*.h' -o -name '*.c'`
-	patch -Rp1 -i ./pre-tidy.patch
+	patch -Rp1 -i misc/pre-tidy.patch
 
 spotless:
 	rm -rf `cat .gitignore | sed -e 's/#.*//'`
