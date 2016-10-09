@@ -23,7 +23,7 @@ int test_deque_new()
 	int failures = 0;
 	struct deque_s *deque;
 
-	deque = deque_new(NULL, NULL, NULL);
+	deque = deque_new();
 
 	if (deque == NULL) {
 		++failures;

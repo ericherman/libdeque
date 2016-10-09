@@ -34,8 +34,8 @@ struct deque_element_s {
 };
 
 struct deque_data_s {
-	struct deque_element_s *top;
-	struct deque_element_s *bottom;
+	struct deque_element_s *top_de;
+	struct deque_element_s *bottom_de;
 	size_t size;
 
 	deque_malloc_func mem_alloc;
@@ -56,21 +56,21 @@ static void deque_memfree(void *ptr, size_t size, void *context)
 	free(ptr);
 }
 
-static void *deque_top(struct deque_s *deque)
+static void *deque_peek_top(struct deque_s *deque)
 {
 	struct deque_data_s *d;
 
 	d = deque->data;
 
-	return d->top ? d->top->data : NULL;
+	return d->top_de ? d->top_de->data : NULL;
 }
 
-static void *deque_bottom(struct deque_s *deque)
+static void *deque_peek_bottom(struct deque_s *deque)
 {
 	struct deque_data_s *d;
 
 	d = deque->data;
-	return d->bottom ? d->bottom->data : NULL;
+	return d->bottom_de ? d->bottom_de->data : NULL;
 }
 
 static size_t deque_size(struct deque_s *deque)
@@ -96,13 +96,13 @@ static struct deque_s *deque_push(struct deque_s *deque, void *data)
 	e->above = NULL;
 
 	if (d->size == 0) {
-		d->bottom = e;
+		d->bottom_de = e;
 		e->below = NULL;
 	} else {
-		e->below = d->top;
-		d->top->above = e;
+		e->below = d->top_de;
+		d->top_de->above = e;
 	}
-	d->top = e;
+	d->top_de = e;
 	++d->size;
 	return deque;
 }
@@ -119,13 +119,13 @@ static void *deque_pop(struct deque_s *deque)
 		return NULL;
 	}
 
-	freeme = d->top;
+	freeme = d->top_de;
 	data = freeme->data;
-	if (d->bottom == freeme) {
-		d->top = NULL;
-		d->bottom = NULL;
+	if (d->bottom_de == freeme) {
+		d->top_de = NULL;
+		d->bottom_de = NULL;
 	} else {
-		d->top = freeme->below;
+		d->top_de = freeme->below;
 	}
 	d->mem_free(freeme, sizeof(struct deque_element_s), d->mem_context);
 	--d->size;
@@ -146,13 +146,13 @@ static struct deque_s *deque_unshift(struct deque_s *deque, void *data)
 	e->below = NULL;
 
 	if (d->size == 0) {
-		d->top = e;
+		d->top_de = e;
 		e->above = NULL;
 	} else {
-		e->above = d->bottom;
-		d->bottom->below = e;
+		e->above = d->bottom_de;
+		d->bottom_de->below = e;
 	}
-	d->bottom = e;
+	d->bottom_de = e;
 	++d->size;
 	return deque;
 }
@@ -164,21 +164,26 @@ static void *deque_shift(struct deque_s *deque)
 	struct deque_element_s *freeme;
 
 	d = deque->data;
-	freeme = d->bottom;
+	freeme = d->bottom_de;
 	data = freeme->data;
-	if (d->top == freeme) {
-		d->top = NULL;
-		d->bottom = NULL;
+	if (d->top_de == freeme) {
+		d->top_de = NULL;
+		d->bottom_de = NULL;
 	} else {
-		d->bottom = freeme->above;
+		d->bottom_de = freeme->above;
 	}
 	d->mem_free(freeme, sizeof(struct deque_element_s), d->mem_context);
 	--d->size;
 	return data;
 }
 
-struct deque_s *deque_new(deque_malloc_func a, deque_free_func f,
-			  void *mem_context)
+struct deque_s *deque_new()
+{
+	return deque_new_custom_allocator(NULL, NULL, NULL);
+}
+
+struct deque_s *deque_new_custom_allocator(deque_malloc_func a,
+					   deque_free_func f, void *mem_context)
 {
 	struct deque_s *deque;
 	struct deque_data_s *d;
@@ -195,8 +200,8 @@ struct deque_s *deque_new(deque_malloc_func a, deque_free_func f,
 	deque->pop = deque_pop;
 	deque->unshift = deque_unshift;
 	deque->shift = deque_shift;
-	deque->top = deque_top;
-	deque->bottom = deque_bottom;
+	deque->peek_top = deque_peek_top;
+	deque->peek_bottom = deque_peek_bottom;
 	deque->size = deque_size;
 
 	d = a(sizeof(struct deque_data_s), mem_context);
@@ -205,8 +210,8 @@ struct deque_s *deque_new(deque_malloc_func a, deque_free_func f,
 		return NULL;
 	}
 
-	d->top = NULL;
-	d->bottom = NULL;
+	d->top_de = NULL;
+	d->bottom_de = NULL;
 	d->size = 0;
 
 	d->mem_alloc = a;
@@ -223,7 +228,7 @@ void deque_free(struct deque_s *deque)
 	struct deque_data_s *d;
 
 	d = deque->data;
-	while (d->top) {
+	while (d->top_de) {
 		deque_pop(deque);
 	}
 	d->mem_free(deque, sizeof(struct deque_s), d->mem_context);

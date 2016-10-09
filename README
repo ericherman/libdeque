@@ -1,9 +1,69 @@
-A simple implementation of a double-ended queue
+The libdeque is a pure ANSI C89 compatible object oriented library for
+double-ended queues and stacks.  The term "deque" can be thought of as
+an abbreviation of "Double-Ended QUEue." Like a deck of cards, one may
+add to (or deal from) the top or bottom.
 
 Inspired by: Donald Knuth.
 The Art of Computer Programming, Volume 1: Fundamental Algorithms
 Section 2.2.1: Stacks, Queues, and Deques, pp. 238-243.
 ( third edition, Addison-Wesley, 1997. ISBN 0-201-89683-4 )
+
+
+Usage
+-----
+Include the header file:
+
+	#include <deque.h>
+
+New instaces are typically created with a call to the "deque_new" function:
+
+        struct deque_s *deque = deque_new();
+
+Instead, if needed, a custom allocator can be provided:
+
+	struct deque_s *deque;
+	deque = deque_new_custom_allocator(myalloc, myfree, mycontext);
+
+Items can be added to either end of the deque using the "push" and
+"unshift" member functions. Items can be remonved from either end of the
+deque using the "pop" and "shift" member functions. Each of these
+functions has two parameters, a "this" pointer, and a "void *" for the
+data to be added:
+
+	/* add items to the end of queue (or top of stack): */
+	deque->push(deque, "foo");
+	deque->push(deque, "bar");
+	deque->push(deque, "baz");
+
+	/* remove item from front of queue (or bottom of stack): */
+	char *foo = deque->shift(deque);
+
+	/* remove items from end of queue (or top of stack): */
+	char *baz = deque->pop(deque);
+
+	/* prepend items to queue (or bottom of stack): */
+	deque->unshift(deque, "butt-in");
+
+Additional member functions are provided which do not change the state
+of the deque, but give some information about the currect state. These
+functions are "size", "peek_top", and "peek_bottom":
+
+	/* the number of items in the of the deque */
+	int size = deque->size(deque);
+
+	/* pointer to data at the end of the queue (or top of the stack) */
+	void *bar = deque->peek_top(deque);
+
+	/* pointer to data at the front of the queue (or bottom of the stack) */
+	void *butt_in = deque->peek_bottom(deque);
+
+Instances can be freed using the "deque_free" function. Of course, if
+the instance was created with a custom allocation and free functions,
+the deque_free function will use the function pointer which was
+provided:
+
+	/* free the deque memory and all memory deque allocated */
+	deque_free(deque);
 
 
 Dependencies

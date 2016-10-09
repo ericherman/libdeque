@@ -23,7 +23,7 @@ int test_deque_push_pop(void)
 	int failures = 0;
 	struct deque_s *deque;
 
-	deque = deque_new(NULL, NULL, NULL);
+	deque = deque_new();
 
 	failures += check_size_t_m(deque->size(deque), 0, "initial size");
 

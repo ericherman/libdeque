@@ -53,7 +53,7 @@ int test_deque_custom_allocator()
 	struct mem_context ctx = { 0, 0, 0, 0, 0 };
 	unsigned allocs = 0;
 
-	deque = deque_new(test_malloc, test_free, &ctx);
+	deque = deque_new_custom_allocator(test_malloc, test_free, &ctx);
 	++allocs;
 	++allocs;
 

@@ -24,7 +24,7 @@ int test_out_of_memory(void)
 	struct deque_s *deque;
 	struct deque_s *rv;
 
-	deque = deque_new(NULL, NULL, NULL);
+	deque = deque_new();
 
 	/* push in a loop until OOM */
 	while ((rv = deque->push(deque, NULL)) != NULL) ;

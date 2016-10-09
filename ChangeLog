@@ -1,5 +1,26 @@
 2016-10-09  Eric Herman <eric@freesa.org>
 
+	API changes:
+	Rename constructor to "deque_new_custom_allocator()".
+	Add new constructor "deque_new()" which now takes no arguments.
+	The "top" member function ("deque->top(deque)") has been
+		renamed to "peek_top".
+	The "bottom" member function ("deque->bottom(deque)") has been
+		renamed to "peek_bottom".
+
+	* configure.ac: version bump
+	* NEWS: release 2.0.0 version
+	* README: improve docs
+	* src/deque.c: API change
+	* src/deque.h: API change
+	* tests/test-custom-allocator.c: use new constructor
+	* tests/test-deque-new.c: use new constructor
+	* tests/test-out-of-memory.c: use new constructor
+	* tests/test-push-pop.c: use new constructor
+	* misc/pre-tidy.patch: adjust line numbers
+
+2016-10-09  Eric Herman <eric@freesa.org>
+
 	tidy Licence files, copyright, LGPLv3+ boilerplate
 
 	* COPYING: renamed from misc/lgpl-3.0.txt

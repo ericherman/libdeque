@@ -1,3 +1,11 @@
 libdeque NEWS
 
+* Release version 2.0.0 (2016-10-09) [stable]
+	New constructor API.
+	The "deque_new()" constructor now takes no arguments.
+	The old three argument construtor was renamed to:
+		"deque_new_custom_allocator()".
+	The "deque->top(deque)" member function is now "peek_top".
+	The "deque->bottom(deque)" member function is now "peek_bottom".
+
 * Initial Release version 1.0.0 (2016-05-16) [stable]
