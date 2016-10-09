@@ -1,3 +1,21 @@
+2016-10-09  Eric Herman <eric@freesa.org>
+
+	tidy Licence files, copyright, LGPLv3+ boilerplate
+
+	* COPYING: renamed from misc/lgpl-3.0.txt
+	* COPYING.GPL3: renamed from misc/gpl-3.0.txt
+	* misc/lgpl-3.0.txt: renamed to COPYING
+	* misc/gpl-3.0.txt: renamed to COPYING.GPL3
+	* Makefile.am: reference new names
+	* README: reference new names
+	* src/deque.c: copyright, LGPLv3+ boilerplate
+	* src/deque.h: copyright, LGPLv3+ boilerplate
+	* tests/test-custom-allocator.c: copyright, LGPLv3+ boilerplate
+	* tests/test-deque-new.c: copyright, LGPLv3+ boilerplate
+	* tests/test-deque.h: copyright, LGPLv3+ boilerplate
+	* tests/test-out-of-memory.c: copyright, LGPLv3+ boilerplate
+	* tests/test-push-pop.c: copyright, LGPLv3+ boilerplate
+
 2016-06-15  Eric Herman <eric@freesa.org>
 
 	* COPYING: link to lincense files in misc/
