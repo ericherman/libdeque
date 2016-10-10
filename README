@@ -65,6 +65,10 @@ provided:
 	/* free the deque memory and all memory deque allocated */
 	deque_free(deque);
 
+Compile with the "-ldeque" lib:
+
+        gcc -o foo foo.c -ldeque
+
 
 Dependencies
 ------------
