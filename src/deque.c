@@ -88,7 +88,8 @@ static struct deque_s *deque_push(struct deque_s *deque, void *data)
 
 	d = deque->data;
 
-	e = d->mem_alloc(sizeof(struct deque_element_s), d->mem_context);
+	e = (struct deque_element_s *)
+	    d->mem_alloc(sizeof(struct deque_element_s), d->mem_context);
 	if (!e) {
 		return NULL;
 	}
@@ -138,7 +139,8 @@ static struct deque_s *deque_unshift(struct deque_s *deque, void *data)
 	struct deque_element_s *e;
 
 	d = deque->data;
-	e = d->mem_alloc(sizeof(struct deque_element_s), d->mem_context);
+	e = (struct deque_element_s *)
+	    d->mem_alloc(sizeof(struct deque_element_s), d->mem_context);
 	if (!e) {
 		return NULL;
 	}

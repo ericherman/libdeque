@@ -10,20 +10,25 @@ check_PROGRAMS=\
  test-custom-allocator \
  test-out-of-memory
 
-T_LDADD=libdeque.la -lecheck
+T_LDADD=libdeque.la
 
-test_deque_new_SOURCES=tests/test-deque-new.c src/deque.h tests/test-deque.h
+TEST_COMMON_SOURCES=\
+ src/deque.h \
+ tests/test-deque.h \
+ tests/echeck.h \
+ tests/echeck.c
+
+test_deque_new_SOURCES=$(TEST_COMMON_SOURCES) tests/test-deque-new.c
 test_deque_new_LDADD=$(T_LDADD)
 
-test_push_pop_SOURCES=tests/test-push-pop.c src/deque.h tests/test-deque.h
+test_push_pop_SOURCES=$(TEST_COMMON_SOURCES) tests/test-push-pop.c
 test_push_pop_LDADD=$(T_LDADD)
 
-test_custom_allocator_SOURCES=tests/test-custom-allocator.c src/deque.h \
-			      tests/test-deque.h
+test_custom_allocator_SOURCES=$(TEST_COMMON_SOURCES) \
+ tests/test-custom-allocator.c
 test_custom_allocator_LDADD=$(T_LDADD)
 
-test_out_of_memory_SOURCES=tests/test-out-of-memory.c src/deque.h \
-			   tests/test-deque.h
+test_out_of_memory_SOURCES=$(TEST_COMMON_SOURCES) tests/test-out-of-memory.c
 test_out_of_memory_LDADD=$(T_LDADD)
 
 ACLOCAL_AMFLAGS=-I m4 --install

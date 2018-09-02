@@ -1,3 +1,18 @@
+2018-09-02  Eric Herman <eric@freesa.org>
+
+	Import the lib "E(asy)Check" source, so it builds without
+	needing a separate libecheck download and install.
+
+	https://github.com/ericherman/libecheck
+
+	* tests/echeck.h: copy from libecheck
+	* tests/echeck.c: copy from libecheck
+	* Makefile.am: reference local echeck.h, echeck.c
+	* misc/pre-tidy.patch: add local libecheck
+	* src/deque.c: whitespace
+	* tests/test-deque.h: refernce local echeck.h
+
+
 2016-10-09  Eric Herman <eric@freesa.org>
 
 	API changes:

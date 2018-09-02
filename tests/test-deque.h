@@ -17,7 +17,7 @@
    If not, see <http://www.gnu.org/licenses/>.
 */
 #include <stdio.h>
-#include <echeck.h>
+#include "echeck.h"
 #include "../src/deque.h"
 
 #define TEST_DEQUE_MAIN_IF(val, func) \
