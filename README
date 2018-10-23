@@ -72,8 +72,10 @@ Compile with the "-ldeque" lib:
 
 Dependencies
 ------------
-only the tests depend upon libecheck
-  https://github.com/ericherman/libecheck
+None.
+
+( The tests depend upon libecheck, which is included in the tests dir.
+See also: https://github.com/ericherman/libecheck )
 
 
 Building on linux from a release tar
