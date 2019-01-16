@@ -33,7 +33,7 @@ extern "C" {
 #include <stddef.h>		/* size_t */
 
 struct deque_s {
-	void *data;
+	void *opaque_data;
 
 	/* add items to the end of queue (or top of stack): */
 	struct deque_s *(*push) (struct deque_s *d, void *data);

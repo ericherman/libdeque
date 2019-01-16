@@ -34,7 +34,7 @@ test_out_of_memory_LDADD=$(T_LDADD)
 ACLOCAL_AMFLAGS=-I m4 --install
 
 #OPTIMIZE_FLAGS=-ggdb -O0
-OPTIMIZE_FLAGS=-ggdb -O3 -DNDEBUG -Wno-unused-parameter -fomit-frame-pointer
+OPTIMIZE_FLAGS=-ggdb -O2 -DNDEBUG -Wno-unused-parameter -fomit-frame-pointer
 AM_CFLAGS=-std=c89 -Wall -Wextra -Wpedantic -Werror -pipe $(OPTIMIZE_FLAGS)
 
 EXTRA_DIST=COPYING.GPL3 misc
