@@ -60,7 +60,7 @@ struct deque_s {
 struct deque_s *deque_new();
 
 typedef void *(*deque_malloc_func) (size_t size, void *context);
-typedef void (*deque_free_func) (void *ptr, size_t size, void *context);
+typedef void (*deque_free_func) (void *ptr, void *context);
 
 struct deque_s *deque_new_custom_allocator(deque_malloc_func mfunc,
 					   deque_free_func mfree,

@@ -18,6 +18,7 @@
 */
 
 #include "test-deque.h"
+#include <string.h>		/* memcpy */
 
 struct mem_context {
 	unsigned allocs;
@@ -29,21 +30,45 @@ struct mem_context {
 
 void *test_malloc(size_t size, void *context)
 {
-	struct mem_context *ctx = (struct mem_context *)context;
-	++ctx->allocs;
-	ctx->alloc_bytes += size;
-	return malloc(size);
+	struct mem_context *ctx;
+	unsigned char *sneaky_stash;
+	void *ptr;
+
+	ctx = (struct mem_context *)context;
+	ptr = NULL;
+	sneaky_stash = (unsigned char *)malloc(sizeof(size_t) + size);
+	if (!sneaky_stash) {
+		++ctx->fails;
+	} else {
+		++ctx->allocs;
+		ctx->alloc_bytes += size;
+		/* stash the size in the bytes allocated */
+		memcpy(sneaky_stash, &size, sizeof(size_t));
+		/* set the application pointer */
+		ptr = (void *)(sneaky_stash + sizeof(size_t));
+	}
+	return ptr;
 }
 
-void test_free(void *ptr, size_t size, void *context)
+void test_free(void *ptr, void *context)
 {
-	struct mem_context *ctx = (struct mem_context *)context;
-	++ctx->frees;
-	ctx->free_bytes += size;
+	struct mem_context *ctx;
+	unsigned char *sneaky_stash;
+	size_t size;
+
+	ctx = (struct mem_context *)context;
 	if (ptr == NULL) {
 		++ctx->fails;
+	} else {
+		/* retreive the allocated sneaky stash pointer */
+		sneaky_stash = ((unsigned char *)ptr) - sizeof(size_t);
+		/* fetch the size from the stash */
+		memcpy(&size, sneaky_stash, sizeof(size_t));
+
+		++ctx->frees;
+		ctx->free_bytes += size;
+		free(sneaky_stash);
 	}
-	free(ptr);
 }
 
 int test_deque_custom_allocator()

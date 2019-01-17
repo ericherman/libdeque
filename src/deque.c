@@ -49,7 +49,7 @@ static void *deque_memalloc(size_t size, void *context)
 	return malloc(size);
 }
 
-static void deque_memfree(void *ptr, size_t size, void *context)
+static void deque_memfree(void *ptr, void *context)
 {
 	assert(size != 0);
 	assert(context == NULL);
@@ -144,7 +144,7 @@ static void *deque_pop(struct deque_s *deque)
 	} else {
 		d->top_de = freeme->below;
 	}
-	d->mem_free(freeme, sizeof(struct deque_element_s), d->mem_context);
+	d->mem_free(freeme, d->mem_context);
 	--d->size;
 	return user_data;
 }
@@ -190,7 +190,7 @@ static void *deque_shift(struct deque_s *deque)
 	} else {
 		d->bottom_de = freeme->above;
 	}
-	d->mem_free(freeme, sizeof(struct deque_element_s), d->mem_context);
+	d->mem_free(freeme, d->mem_context);
 	--d->size;
 	return user_data;
 }
@@ -224,7 +224,7 @@ struct deque_s *deque_new_custom_allocator(deque_malloc_func a,
 
 	d = (struct deque_data_s *)a(sizeof(struct deque_data_s), mem_context);
 	if (!d) {
-		deque_memfree(deque, sizeof(struct deque_s), mem_context);
+		deque_memfree(deque, mem_context);
 		return NULL;
 	}
 
@@ -249,6 +249,6 @@ void deque_free(struct deque_s *deque)
 	while (d->top_de) {
 		deque_pop(deque);
 	}
-	d->mem_free(deque, sizeof(struct deque_s), d->mem_context);
-	d->mem_free(d, sizeof(struct deque_data_s), d->mem_context);
+	d->mem_free(deque, d->mem_context);
+	d->mem_free(d, d->mem_context);
 }
