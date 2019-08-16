@@ -1,3 +1,15 @@
+2019-08-16  Eric Herman <eric@freesa.org>
+
+	update echeck used by tests, update the deque.h header /slightly/
+
+	* src/deque.h: use #defines for 'extern "C"', minor comments
+	* tests/echeck.h: update from upstream
+	* tests/echeck.c: update from upstream
+	* misc/pre-tidy.patch: deleted (obsolete)
+	* Makefile.am: remove reference to pre-tidy.patch
+	* configure.ac: v3.0.0 -> v3.0.1
+
+
 2019-01-17  Eric Herman <eric@freesa.org>
 
 	API-breaking change: remove "size" argument from deque_free_func:
@@ -5,10 +17,10 @@
 	-void (*deque_free_func) (void *ptr, size_t size, void *context);
 	+void (*deque_free_func) (void *ptr, void *context);
 
-	modified:   src/deque.h: remove the parameter
-	modified:   src/deque.c: remove the size data
-	modified:   tests/test-custom-allocator.c: use the new API
-	modified:   configure.ac: v2.0.0 -> v3.0.0
+	* src/deque.h: remove the parameter
+	* src/deque.c: remove the size data
+	* tests/test-custom-allocator.c: use the new API
+	* configure.ac: v2.0.0 -> v3.0.0
 
 
 2018-09-02  Eric Herman <eric@freesa.org>

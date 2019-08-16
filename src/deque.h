@@ -27,7 +27,11 @@
 */
 
 #ifdef __cplusplus
-extern "C" {
+#define Deque_begin_C_functions extern "C" {
+#define Deque_end_C_functions }
+#else
+#define Deque_begin_C_functions
+#define Deque_end_C_functions
 #endif
 
 #include <stddef.h>		/* size_t */
@@ -57,10 +61,16 @@ struct deque_s {
 	size_t (*size)(struct deque_s *d);
 };
 
-struct deque_s *deque_new();
-
+Deque_begin_C_functions
+#undef Deque_begin_C_functions
+/* function pointer typedefs for ease of use in full constructor */
 typedef void *(*deque_malloc_func)(size_t size, void *context);
 typedef void (*deque_free_func)(void *ptr, void *context);
+
+/* constructors */
+
+/* uses libc malloc and free */
+struct deque_s *deque_new();
 
 struct deque_s *deque_new_custom_allocator(deque_malloc_func mfunc,
 					   deque_free_func mfree,
@@ -68,8 +78,6 @@ struct deque_s *deque_new_custom_allocator(deque_malloc_func mfunc,
 
 void deque_free(struct deque_s *d);
 
-#ifdef __cplusplus
-}
-#endif
-
+Deque_end_C_functions
+#undef Deque_end_C_functions
 #endif /* DEQUE_H */
