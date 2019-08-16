@@ -39,28 +39,28 @@ struct deque_s {
 	struct deque_s *(*push) (struct deque_s *d, void *data);
 
 	/* remove items from end of queue (or top of stack): */
-	void *(*pop) (struct deque_s *d);
+	void *(*pop)(struct deque_s *d);
 
 	/* prepend items to queue (or bottom of stack): */
 	struct deque_s *(*unshift) (struct deque_s *d, void *data);
 
 	/* remove item from front of queue (or bottom of stack): */
-	void *(*shift) (struct deque_s *d);
+	void *(*shift)(struct deque_s *d);
 
 	/* pointer to data at the end of the queue, or top of the stack */
-	void *(*peek_top) (struct deque_s *d);
+	void *(*peek_top)(struct deque_s *d);
 
 	/* pointer to  data at the front of the queue, or bottom of the stack */
-	void *(*peek_bottom) (struct deque_s *d);
+	void *(*peek_bottom)(struct deque_s *d);
 
 	/* return the number of items in the deque */
-	size_t (*size) (struct deque_s *d);
+	size_t (*size)(struct deque_s *d);
 };
 
 struct deque_s *deque_new();
 
-typedef void *(*deque_malloc_func) (size_t size, void *context);
-typedef void (*deque_free_func) (void *ptr, void *context);
+typedef void *(*deque_malloc_func)(size_t size, void *context);
+typedef void (*deque_free_func)(void *ptr, void *context);
 
 struct deque_s *deque_new_custom_allocator(deque_malloc_func mfunc,
 					   deque_free_func mfree,
