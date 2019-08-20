@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LGPL-3.0-or-later
+# Copyright (C) 2016, 2019 Eric Herman <eric@freesa.org>
 lib_LTLIBRARIES=libdeque.la
 libdeque_la_SOURCES=src/deque.c
 
