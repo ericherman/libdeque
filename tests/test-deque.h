@@ -3,6 +3,7 @@
 /* Copyright (C) 2016, 2019 Eric Herman <eric@freesa.org> */
 
 #include <stdio.h>
+#include <assert.h>
 #include "echeck.h"
 #include "../src/deque.h"
 
@@ -10,6 +11,8 @@
 int main(int argc, char **argv) \
 { \
 	int failures = 0; \
+	assert(argc); \
+	assert(argv); \
 	if (val) { \
 		failures += func; \
 	} \
