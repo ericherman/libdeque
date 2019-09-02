@@ -36,7 +36,6 @@ static void *deque_memalloc(size_t size, void *context)
 
 static void deque_memfree(void *ptr, void *context)
 {
-	assert(size != 0);
 	assert(context == NULL);
 	free(ptr);
 }
