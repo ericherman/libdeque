@@ -179,7 +179,7 @@ static void *deque_shift(struct deque_s *deque)
 	return user_data;
 }
 
-struct deque_s *deque_new()
+struct deque_s *deque_new(void)
 {
 	return deque_new_custom_allocator(NULL, NULL, NULL);
 }

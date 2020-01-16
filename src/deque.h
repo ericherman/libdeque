@@ -56,7 +56,7 @@ typedef void (*deque_free_func)(void *ptr, void *context);
 /* constructors */
 
 /* uses libc malloc and free */
-struct deque_s *deque_new();
+struct deque_s *deque_new(void);
 
 struct deque_s *deque_new_custom_allocator(deque_malloc_func mfunc,
 					   deque_free_func mfree,
