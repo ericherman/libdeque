@@ -1,6 +1,6 @@
 /* SPDX-License-Identifier: LGPL-3.0-or-later */
 /* deque.h Double-Ended QUEue interface */
-/* Copyright (C) 2016, 2019 Eric Herman <eric@freesa.org> */
+/* Copyright (C) 2016, 2019, 2020 Eric Herman <eric@freesa.org> */
 
 #ifndef DEQUE_H
 #define DEQUE_H

@@ -1,3 +1,23 @@
+2020-02-06  Eric Herman <eric@freesa.org>
+
+	Running gcov/lcov revealed some uncovered code/branches.
+	The "peek" methods were not tested, so added tests.
+	One uncovered branch had a NULL pointer dereference! (fixed)
+	Most uncovered branches were "malloc returns NULL" ... thus,
+	I re-wrote the OOM tests using a custom allocator.
+	I also cleaned up the code a bit.
+
+	lcov now reports 100% test coverage without using any LCOV_EXCL!
+
+	* src/deque.h: prototypes should have "void", not empty parens
+	* src/deque.c: fix NULL ptr deref, alloc/free code
+	* tests/test-out-of-memory.c: rewrite with failing allocator
+	* tests/test-peek.c: add test for the peek commands
+	* tests/test-push-pop.c: add some corner-cases
+	* configure.ac: v3.0.2 -> v3.0.3
+	* Makefile.am: add --coverage CFLAGS, test-peek, valgrind
+	* .gitignore: gcov/lcov files
+
 2019-08-20  Eric Herman <eric@freesa.org>
 
 	SPDX-License-Identifier: LGPL-3.0-or-later

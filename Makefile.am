@@ -1,5 +1,23 @@
 # SPDX-License-Identifier: LGPL-3.0-or-later
-# Copyright (C) 2016, 2019 Eric Herman <eric@freesa.org>
+# Copyright (C) 2016, 2019, 2020 Eric Herman <eric@freesa.org>
+
+#DEBUG_CFLAGS=-ggdb -O0 \
+#		-fno-inline-small-functions \
+#		-fkeep-inline-functions \
+#		-fkeep-static-functions \
+#		--coverage
+
+RELEASE_CFLAGS=-ggdb -O2 -DNDEBUG -Wno-unused-parameter -fomit-frame-pointer
+
+BUILD_TYPE_CFLAGS=$(RELEASE_CFLAGS)
+
+AM_CFLAGS=-std=c89 \
+	-Wall -Wextra -Wpedantic -Werror \
+	$(BUILD_TYPE_CFLAGS) \
+	-pipe
+
+AM_LDFLAGS=--coverage
+
 lib_LTLIBRARIES=libdeque.la
 libdeque_la_SOURCES=src/deque.c
 
@@ -9,6 +27,7 @@ TESTS=$(check_PROGRAMS)
 check_PROGRAMS=\
  test-deque-new \
  test-push-pop \
+ test-peek \
  test-custom-allocator \
  test-out-of-memory
 
@@ -26,6 +45,9 @@ test_deque_new_LDADD=$(T_LDADD)
 test_push_pop_SOURCES=$(TEST_COMMON_SOURCES) tests/test-push-pop.c
 test_push_pop_LDADD=$(T_LDADD)
 
+test_peek_SOURCES=$(TEST_COMMON_SOURCES) tests/test-peek.c
+test_peek_LDADD=$(T_LDADD)
+
 test_custom_allocator_SOURCES=$(TEST_COMMON_SOURCES) \
  tests/test-custom-allocator.c
 test_custom_allocator_LDADD=$(T_LDADD)
@@ -35,11 +57,7 @@ test_out_of_memory_LDADD=$(T_LDADD)
 
 ACLOCAL_AMFLAGS=-I m4 --install
 
-#OPTIMIZE_FLAGS=-ggdb -O0
-OPTIMIZE_FLAGS=-ggdb -O2 -DNDEBUG -Wno-unused-parameter -fomit-frame-pointer
-AM_CFLAGS=-std=c89 -Wall -Wextra -Wpedantic -Werror -pipe $(OPTIMIZE_FLAGS)
-
-EXTRA_DIST=COPYING.GPL3
+EXTRA_DIST=COPYING.LESSER
 
 # extracted from https://github.com/torvalds/linux/blob/master/scripts/Lindent
 LINDENT=indent -npro -kr -i8 -ts8 -sob -l80 -ss -ncs -cp1 -il0
@@ -57,6 +75,8 @@ spotless:
 	pushd tests && rm -rf `cat ../.gitignore | sed -e 's/#.*//'` && popd
 
 valgrind: $(check_PROGRAMS)
-	libtool --mode=execute valgrind -q ./test-deque-new
-	libtool --mode=execute valgrind -q ./test-push-pop
-	libtool --mode=execute valgrind -q ./test-custom-allocator
+	./libtool --mode=execute valgrind -q ./test-deque-new
+	./libtool --mode=execute valgrind -q ./test-push-pop
+	./libtool --mode=execute valgrind -q ./test-peek
+	./libtool --mode=execute valgrind -q ./test-custom-allocator
+	./libtool --mode=execute valgrind -q ./test-out-of-memory

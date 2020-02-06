@@ -1,6 +1,6 @@
 /* SPDX-License-Identifier: LGPL-3.0-or-later */
 /* test-push-pop.c */
-/* Copyright (C) 2016, 2019 Eric Herman <eric@freesa.org> */
+/* Copyright (C) 2016, 2019, 2020 Eric Herman <eric@freesa.org> */
 
 #include "test-deque.h"
 
@@ -36,6 +36,10 @@ int test_deque_push_pop(void)
 	failures += check_str_m((char *)deque->pop(deque), "two", "pop3");
 
 	failures += check_size_t_m(deque->size(deque), 0, "size C");
+
+	failures += check_str_m((char *)deque->shift(deque), NULL, "shift3");
+	failures += check_ptr_m(deque->unshift(deque, "foo"), deque, "unshift");
+	failures += check_str_m((char *)deque->shift(deque), "foo", "shift4");
 
 	deque_free(deque);
 	return failures;

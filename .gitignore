@@ -23,12 +23,17 @@ $*
 *.log
 *.trs
 *.tar.*
+*.gcda
+*.gcno
+coverage.info
+coverage_html/
 test-*-dynamic
 test-*-static
 test-deque
 test-custom-allocator
 test-deque-new
 test-out-of-memory
+test-peek
 test-push-pop
 
 ################

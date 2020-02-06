@@ -1,6 +1,6 @@
 /* SPDX-License-Identifier: LGPL-3.0-or-later */
 /* deque.c Double-Ended QUEue */
-/* Copyright (C) 2016, 2019 Eric Herman <eric@freesa.org> */
+/* Copyright (C) 2016, 2019, 2020 Eric Herman <eric@freesa.org> */
 
 /*
    Inspired by: Donald Knuth.
@@ -166,6 +166,11 @@ static void *deque_shift(struct deque_s *deque)
 	struct deque_element_s *freeme;
 
 	d = deque_get_internal_data(deque);
+
+	if (d->size == 0) {
+		return NULL;
+	}
+
 	freeme = d->bottom_de;
 	user_data = freeme->user_data;
 	if (d->top_de == freeme) {
@@ -184,16 +189,22 @@ struct deque_s *deque_new(void)
 	return deque_new_custom_allocator(NULL, NULL, NULL);
 }
 
-struct deque_s *deque_new_custom_allocator(deque_malloc_func a,
-					   deque_free_func f, void *mem_context)
+struct deque_s *deque_new_custom_allocator(deque_malloc_func mem_alloc,
+					   deque_free_func mem_free,
+					   void *mem_context)
 {
 	struct deque_s *deque;
 	struct deque_data_s *d;
+	size_t size;
 
-	if (!a) {
-		a = deque_memalloc;
+	if (!mem_alloc) {
+		mem_alloc = deque_memalloc;
 	}
-	deque = (struct deque_s *)a(sizeof(struct deque_s), mem_context);
+	if (!mem_free) {
+		mem_free = deque_memfree;
+	}
+	size = sizeof(struct deque_s);
+	deque = (struct deque_s *)mem_alloc(size, mem_context);
 	if (!deque) {
 		return NULL;
 	}
@@ -206,9 +217,10 @@ struct deque_s *deque_new_custom_allocator(deque_malloc_func a,
 	deque->peek_bottom = deque_peek_bottom;
 	deque->size = deque_size;
 
-	d = (struct deque_data_s *)a(sizeof(struct deque_data_s), mem_context);
+	size = sizeof(struct deque_data_s);
+	d = (struct deque_data_s *)mem_alloc(size, mem_context);
 	if (!d) {
-		deque_memfree(deque, mem_context);
+		mem_free(deque, mem_context);
 		return NULL;
 	}
 
@@ -216,8 +228,8 @@ struct deque_s *deque_new_custom_allocator(deque_malloc_func a,
 	d->bottom_de = NULL;
 	d->size = 0;
 
-	d->mem_alloc = a;
-	d->mem_free = f ? f : deque_memfree;
+	d->mem_alloc = mem_alloc;
+	d->mem_free = mem_free;
 	d->mem_context = mem_context;
 
 	deque_set_internal_data(deque, d);
@@ -228,11 +240,20 @@ struct deque_s *deque_new_custom_allocator(deque_malloc_func a,
 void deque_free(struct deque_s *deque)
 {
 	struct deque_data_s *d;
+	deque_free_func mem_free;
+	void *mem_context;
 
+	if (!deque) {
+		return;
+	}
 	d = deque_get_internal_data(deque);
 	while (d->top_de) {
 		deque_pop(deque);
 	}
-	d->mem_free(deque, d->mem_context);
-	d->mem_free(d, d->mem_context);
+
+	mem_free = d->mem_free;
+	mem_context = d->mem_context;
+
+	mem_free(d, mem_context);
+	mem_free(deque, mem_context);
 }
