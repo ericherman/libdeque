@@ -77,9 +77,25 @@ spotless:
 	pushd src && rm -rf `cat ../.gitignore | sed -e 's/#.*//'` && popd
 	pushd tests && rm -rf `cat ../.gitignore | sed -e 's/#.*//'` && popd
 
-valgrind: $(check_PROGRAMS)
+vg-test-deque-new: test-deque-new
 	./libtool --mode=execute valgrind -q ./test-deque-new
+
+vg-test-push-pop: test-push-pop
 	./libtool --mode=execute valgrind -q ./test-push-pop
+
+vg-test-peek: test-peek
 	./libtool --mode=execute valgrind -q ./test-peek
+
+vg-test-custom-allocator: test-custom-allocator
 	./libtool --mode=execute valgrind -q ./test-custom-allocator
+
+vg-test-out-of-memory: test-out-of-memory
 	./libtool --mode=execute valgrind -q ./test-out-of-memory
+
+
+valgrind: \
+	vg-test-custom-allocator \
+	vg-test-deque-new \
+	vg-test-out-of-memory \
+	vg-test-peek \
+	vg-test-push-pop
