@@ -78,6 +78,16 @@ None.
 See also: https://github.com/ericherman/libecheck )
 
 
+Cloning
+-------
+git clone -o upstream https://github.com/ericherman/libdeque.git &&
+ cd libdeque &&
+ git submodule update --init --recursive &&
+ autoreconf -iv &&
+ ./configure &&
+ make -j check
+
+
 Building on linux from a release tar
 --------
 tar xfz /path/to/libdeque-$VERSION.tar.gz

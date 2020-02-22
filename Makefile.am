@@ -39,8 +39,8 @@ T_LDADD=libdeque.la
 TEST_COMMON_SOURCES=\
  src/deque.h \
  tests/test-deque.h \
- tests/echeck.h \
- tests/echeck.c
+ submodules/libecheck/src/echeck.h \
+ submodules/libecheck/src/echeck.c
 
 test_deque_new_SOURCES=$(TEST_COMMON_SOURCES) tests/test-deque-new.c
 test_deque_new_LDADD=$(T_LDADD)
@@ -60,7 +60,11 @@ test_out_of_memory_LDADD=$(T_LDADD)
 
 ACLOCAL_AMFLAGS=-I m4 --install
 
-EXTRA_DIST=COPYING.LESSER
+EXTRA_DIST=COPYING.LESSER \
+ submodules/libecheck/COPYING \
+ submodules/libecheck/COPYING.LESSER \
+ submodules/libecheck/src/echeck.h \
+ submodules/libecheck/src/echeck.c
 
 # extracted from https://github.com/torvalds/linux/blob/master/scripts/Lindent
 LINDENT=indent -npro -kr -i8 -ts8 -sob -l80 -ss -ncs -cp1 -il0

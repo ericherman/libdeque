@@ -4,7 +4,7 @@
 
 #include <stdio.h>
 #include <assert.h>
-#include "echeck.h"
+#include "../submodules/libecheck/src/echeck.h"
 #include "../src/deque.h"
 
 #define TEST_DEQUE_MAIN_IF(val, func) \
