@@ -209,6 +209,7 @@ struct deque_s *deque_new_custom_allocator(deque_malloc_func mem_alloc,
 		return NULL;
 	}
 
+	deque->opaque_data = NULL;
 	deque->push = deque_push;
 	deque->pop = deque_pop;
 	deque->unshift = deque_unshift;
