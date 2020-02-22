@@ -1,22 +1,25 @@
 # SPDX-License-Identifier: LGPL-3.0-or-later
 # Copyright (C) 2016, 2019, 2020 Eric Herman <eric@freesa.org>
 
-#DEBUG_CFLAGS=-ggdb -O0 \
-#		-fno-inline-small-functions \
-#		-fkeep-inline-functions \
-#		-fkeep-static-functions \
-#		--coverage
-
-RELEASE_CFLAGS=-ggdb -O2 -DNDEBUG -Wno-unused-parameter -fomit-frame-pointer
-
-BUILD_TYPE_CFLAGS=$(RELEASE_CFLAGS)
+if DEBUG
+BUILD_TYPE_CFLAGS=-ggdb -O0 \
+	-fsanitize=address,leak,undefined \
+	-fno-inline-small-functions \
+	-fkeep-inline-functions \
+	-fkeep-static-functions \
+	--coverage
+BUILD_TYPE_LDFLAGS=--coverage
+else
+BUILD_TYPE_CFLAGS=-ggdb -O2 -DNDEBUG -Wno-unused-parameter -fomit-frame-pointer
+BUILD_TYPE_LDFLAGS=
+endif
 
 AM_CFLAGS=-std=c89 \
 	-Wall -Wextra -Wpedantic -Werror \
 	$(BUILD_TYPE_CFLAGS) \
 	-pipe
 
-AM_LDFLAGS=--coverage
+AM_LDFLAGS=$(BUILD_TYPE_LDFLAGS)
 
 lib_LTLIBRARIES=libdeque.la
 libdeque_la_SOURCES=src/deque.c

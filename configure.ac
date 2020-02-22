@@ -26,6 +26,18 @@ AC_TYPE_SIZE_T
 # Checks for library functions.
 AC_FUNC_MALLOC
 
+# Add an --enable-debug option in a somewhat horrible and non-autotoolsy way
+AC_ARG_ENABLE(debug,
+AS_HELP_STRING([--enable-debug],
+               [enable debugging, default: no]),
+[case "${enableval}" in
+             yes) debug=true ;;
+             no)  debug=false ;;
+             *)   AC_MSG_ERROR([bad value ${enableval} for --enable-debug]) ;;
+esac],
+[debug=false])
+AM_CONDITIONAL(DEBUG, test x"$debug" = x"true")
+
 AM_INIT_AUTOMAKE([subdir-objects -Werror -Wall])
 AM_PROG_AR
 LT_INIT
