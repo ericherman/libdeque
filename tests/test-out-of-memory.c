@@ -138,6 +138,7 @@ int test_out_of_memory(void)
 	int failures = 0;
 
 	failures += test_out_of_memory_push(0);
+	failures += test_out_of_memory_push(1UL << 0);
 	failures += test_out_of_memory_push(1UL << 1);
 	failures += test_out_of_memory_push(1UL << 2);
 	failures += test_out_of_memory_push(1UL << 3);
