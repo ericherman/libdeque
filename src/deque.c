@@ -23,8 +23,8 @@ struct deque_data_s {
 	struct deque_element_s *bottom_de;
 	size_t size;
 
-	easy_malloc_func mem_alloc;
-	easy_free_func mem_free;
+	context_malloc_func mem_alloc;
+	context_free_func mem_free;
 	void *mem_context;
 };
 
@@ -180,8 +180,8 @@ struct deque_s *deque_new(void)
 	return deque_new_custom_allocator(NULL, NULL, NULL);
 }
 
-struct deque_s *deque_new_custom_allocator(easy_malloc_func mem_alloc,
-					   easy_free_func mem_free,
+struct deque_s *deque_new_custom_allocator(context_malloc_func mem_alloc,
+					   context_free_func mem_free,
 					   void *mem_context)
 {
 	struct deque_s *deque;
@@ -189,8 +189,8 @@ struct deque_s *deque_new_custom_allocator(easy_malloc_func mem_alloc,
 	size_t size;
 
 	if (!mem_alloc || !mem_free) {
-		mem_alloc = easy_stdlib_malloc;
-		mem_free = easy_stdlib_free;
+		mem_alloc = context_stdlib_malloc;
+		mem_free = context_stdlib_free;
 		mem_context = NULL;
 	}
 	size = sizeof(struct deque_s);
@@ -231,7 +231,7 @@ struct deque_s *deque_new_custom_allocator(easy_malloc_func mem_alloc,
 void deque_free(struct deque_s *deque)
 {
 	struct deque_data_s *d;
-	easy_free_func mem_free;
+	context_free_func mem_free;
 	void *mem_context;
 
 	if (!deque) {
