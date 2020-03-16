@@ -50,8 +50,8 @@ struct deque_s {
 Deque_begin_C_functions
 #undef Deque_begin_C_functions
 /* function pointer typedefs for ease of use in full constructor */
-typedef void *(*deque_malloc_func)(size_t size, void *context);
-typedef void (*deque_free_func)(void *ptr, void *context);
+typedef void *(*deque_malloc_func)(void *context, size_t size);
+typedef void (*deque_free_func)(void *context, void *ptr);
 
 /* constructors */
 

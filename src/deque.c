@@ -28,13 +28,13 @@ struct deque_data_s {
 	void *mem_context;
 };
 
-static void *deque_memalloc(size_t size, void *context)
+static void *deque_memalloc(void *context, size_t size)
 {
 	assert(context == NULL);
 	return malloc(size);
 }
 
-static void deque_memfree(void *ptr, void *context)
+static void deque_memfree(void *context, void *ptr)
 {
 	assert(context == NULL);
 	free(ptr);
@@ -85,11 +85,12 @@ static struct deque_s *deque_push(struct deque_s *deque, void *user_data)
 {
 	struct deque_data_s *d;
 	struct deque_element_s *e;
+	size_t size;
 
 	d = deque_get_internal_data(deque);
 
-	e = (struct deque_element_s *)
-	    d->mem_alloc(sizeof(struct deque_element_s), d->mem_context);
+	size = sizeof(struct deque_element_s);
+	e = (struct deque_element_s *)d->mem_alloc(d->mem_context, size);
 	if (!e) {
 		return NULL;
 	}
@@ -128,7 +129,7 @@ static void *deque_pop(struct deque_s *deque)
 	} else {
 		d->top_de = freeme->below;
 	}
-	d->mem_free(freeme, d->mem_context);
+	d->mem_free(d->mem_context, freeme);
 	--d->size;
 	return user_data;
 }
@@ -137,10 +138,12 @@ static struct deque_s *deque_unshift(struct deque_s *deque, void *user_data)
 {
 	struct deque_data_s *d;
 	struct deque_element_s *e;
+	size_t size;
 
 	d = deque_get_internal_data(deque);
-	e = (struct deque_element_s *)
-	    d->mem_alloc(sizeof(struct deque_element_s), d->mem_context);
+
+	size = sizeof(struct deque_element_s);
+	e = (struct deque_element_s *)d->mem_alloc(d->mem_context, size);
 	if (!e) {
 		return NULL;
 	}
@@ -179,7 +182,7 @@ static void *deque_shift(struct deque_s *deque)
 	} else {
 		d->bottom_de = freeme->above;
 	}
-	d->mem_free(freeme, d->mem_context);
+	d->mem_free(d->mem_context, freeme);
 	--d->size;
 	return user_data;
 }
@@ -204,7 +207,7 @@ struct deque_s *deque_new_custom_allocator(deque_malloc_func mem_alloc,
 		mem_free = deque_memfree;
 	}
 	size = sizeof(struct deque_s);
-	deque = (struct deque_s *)mem_alloc(size, mem_context);
+	deque = (struct deque_s *)mem_alloc(mem_context, size);
 	if (!deque) {
 		return NULL;
 	}
@@ -219,9 +222,9 @@ struct deque_s *deque_new_custom_allocator(deque_malloc_func mem_alloc,
 	deque->size = deque_size;
 
 	size = sizeof(struct deque_data_s);
-	d = (struct deque_data_s *)mem_alloc(size, mem_context);
+	d = (struct deque_data_s *)mem_alloc(mem_context, size);
 	if (!d) {
-		mem_free(deque, mem_context);
+		mem_free(mem_context, deque);
 		return NULL;
 	}
 
@@ -255,6 +258,6 @@ void deque_free(struct deque_s *deque)
 	mem_free = d->mem_free;
 	mem_context = d->mem_context;
 
-	mem_free(d, mem_context);
-	mem_free(deque, mem_context);
+	mem_free(mem_context, d);
+	mem_free(mem_context, deque);
 }

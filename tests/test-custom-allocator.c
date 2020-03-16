@@ -13,7 +13,7 @@ struct mem_context {
 	unsigned fails;
 };
 
-void *test_malloc(size_t size, void *context)
+void *test_malloc(void *context, size_t size)
 {
 	struct mem_context *ctx;
 	unsigned char *sneaky_stash;
@@ -35,7 +35,7 @@ void *test_malloc(size_t size, void *context)
 	return ptr;
 }
 
-void test_free(void *ptr, void *context)
+void test_free(void *context, void *ptr)
 {
 	struct mem_context *ctx;
 	unsigned char *sneaky_stash;
