@@ -85,7 +85,8 @@ git clone -o upstream https://github.com/ericherman/libdeque.git &&
  git submodule update --init --recursive &&
  autoreconf -iv &&
  ./configure &&
- make -j check
+ make -j check &&
+ make spotless
 
 
 Building on linux from a release tar

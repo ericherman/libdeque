@@ -3,13 +3,20 @@
 	Version 4.0.0 changes the argument order of the malloc/free
 	wrapper functions to place the context object first.
 	This ordering is in-keeping with the OO notion of a "this"
-	pointer.
+	pointer, as well as the "easy-alloc" package. This version
+	also no longer uses it's own type-def for allocators but
+	rather imports them via "#include <easy-alloc.h>".
 
-	* src/deque.h: re-order alloc/free context object argument order
-	* src/deque.c: re-order alloc/free arg order
-	* tests/test-custom-allocator.c
-	* tests/test-out-of-memory.c
+	* src/deque.h: easy-alloc, re-order alloc/free context obj arg order
+	* src/deque.c: easy-alloc, re-order alloc/free arg order
+	* tests/test-deque.h: include easy-alloc/util/oom-injecting-malloc.h
+	* tests/test-custom-allocator.c: match arg order version
+	* tests/test-out-of-memory.c: use easy-alloc's oom-injecting-malloc
 	* configure.ac: version bump to 4.0.0
+	* .gitmodules: add easy-alloc
+	* submodules/easy-alloc: (new)
+	* Makefile.am: reference all the easy-alloc stuff
+	* README: try to deal with submodule make clutter
 
 2020-02-06  Eric Herman <eric@freesa.org>
 

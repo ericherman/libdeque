@@ -50,16 +50,13 @@ struct deque_s {
 Deque_begin_C_functions
 #undef Deque_begin_C_functions
 /* function pointer typedefs for ease of use in full constructor */
-typedef void *(*deque_malloc_func)(void *context, size_t size);
-typedef void (*deque_free_func)(void *context, void *ptr);
-
+#include <easy-alloc.h>
 /* constructors */
-
 /* uses libc malloc and free */
 struct deque_s *deque_new(void);
 
-struct deque_s *deque_new_custom_allocator(deque_malloc_func mfunc,
-					   deque_free_func mfree,
+struct deque_s *deque_new_custom_allocator(easy_malloc_func mfunc,
+					   easy_free_func mfree,
 					   void *mcontext);
 
 void deque_free(struct deque_s *d);

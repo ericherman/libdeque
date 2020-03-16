@@ -6,6 +6,7 @@
 #include <assert.h>
 #include "../submodules/libecheck/src/echeck.h"
 #include "../src/deque.h"
+#include "../submodules/easy-alloc/util/oom-injecting-malloc.h"
 
 #define TEST_DEQUE_MAIN_IF(val, func) \
 int main(int argc, char **argv) \

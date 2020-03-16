@@ -17,14 +17,17 @@ endif
 AM_CFLAGS=-std=c89 \
 	-Wall -Wextra -Wpedantic -Werror \
 	$(BUILD_TYPE_CFLAGS) \
+	-I./submodules/easy-alloc/src -I../../submodules/easy-alloc/src \
 	-pipe
 
 AM_LDFLAGS=$(BUILD_TYPE_LDFLAGS)
 
 lib_LTLIBRARIES=libdeque.la
-libdeque_la_SOURCES=src/deque.c
+libdeque_la_SOURCES=src/deque.c \
+		submodules/easy-alloc/src/easy-alloc.c
 
-include_HEADERS=src/deque.h
+include_HEADERS=src/deque.h \
+		submodules/easy-alloc/src/easy-alloc.h
 
 TESTS=$(check_PROGRAMS)
 check_PROGRAMS=\
@@ -39,6 +42,8 @@ T_LDADD=libdeque.la
 TEST_COMMON_SOURCES=\
  src/deque.h \
  tests/test-deque.h \
+ submodules/easy-alloc/util/oom-injecting-malloc.h \
+ submodules/easy-alloc/util/oom-injecting-malloc.c \
  submodules/libecheck/src/echeck.h \
  submodules/libecheck/src/echeck.c
 
@@ -61,6 +66,12 @@ test_out_of_memory_LDADD=$(T_LDADD)
 ACLOCAL_AMFLAGS=-I m4 --install
 
 EXTRA_DIST=COPYING.LESSER \
+ submodules/easy-alloc/COPYING \
+ submodules/easy-alloc/COPYING.LESSER \
+ submodules/easy-alloc/src/easy-alloc.h \
+ submodules/easy-alloc/src/easy-alloc.c \
+ submodules/easy-alloc/util/oom-injecting-malloc.h \
+ submodules/easy-alloc/util/oom-injecting-malloc.c \
  submodules/libecheck/COPYING \
  submodules/libecheck/COPYING.LESSER \
  submodules/libecheck/src/echeck.h \
@@ -80,6 +91,7 @@ spotless:
 	rm -rf `cat .gitignore | sed -e 's/#.*//'`
 	pushd src && rm -rf `cat ../.gitignore | sed -e 's/#.*//'` && popd
 	pushd tests && rm -rf `cat ../.gitignore | sed -e 's/#.*//'` && popd
+	pushd submodules/easy-alloc && git clean -dxf && popd
 
 vg-test-deque-new: test-deque-new
 	./libtool --mode=execute valgrind -q ./test-deque-new

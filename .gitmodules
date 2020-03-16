@@ -1,3 +1,6 @@
 [submodule "submodules/libecheck"]
 	path = submodules/libecheck
 	url = https://github.com/ericherman/libecheck.git
+[submodule "submodules/easy-alloc"]
+	path = submodules/easy-alloc
+	url = https://github.com/ericherman/easy-alloc
