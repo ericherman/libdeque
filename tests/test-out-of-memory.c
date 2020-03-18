@@ -11,11 +11,11 @@ int test_out_of_memory_push(unsigned long malloc_fail_bitmask)
 	int failures = 0;
 	int err = 0;
 	size_t i;
-	struct oom_injecting_context_s mctx;
+	oom_injecting_context_s mctx;
 	struct deque_s *deque;
 	struct deque_s *rv;
 
-	memset(&mctx, 0, sizeof(struct oom_injecting_context_s));
+	memset(&mctx, 0, sizeof(oom_injecting_context_s));
 	mctx.attempts_to_fail_bitmask = malloc_fail_bitmask;
 
 	deque =
