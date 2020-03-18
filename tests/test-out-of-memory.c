@@ -11,16 +11,17 @@ int test_out_of_memory_push(unsigned long malloc_fail_bitmask)
 	int failures = 0;
 	int err = 0;
 	size_t i;
+	context_malloc_func ctx_alloc = oom_injecting_malloc;
+	context_free_func ctx_free = oom_injecting_free;
 	oom_injecting_context_s mctx;
 	struct deque_s *deque;
 	struct deque_s *rv;
 
-	memset(&mctx, 0, sizeof(oom_injecting_context_s));
+	oom_injecting_context_init(&mctx);
+
 	mctx.attempts_to_fail_bitmask = malloc_fail_bitmask;
 
-	deque =
-	    deque_new_custom_allocator(oom_injecting_malloc, oom_injecting_free,
-				       &mctx);
+	deque = deque_new_custom_allocator(ctx_alloc, ctx_free, &mctx);
 	if (!deque) {
 		++err;
 		if (!malloc_fail_bitmask) {
