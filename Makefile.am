@@ -91,7 +91,6 @@ spotless:
 	rm -rf `cat .gitignore | sed -e 's/#.*//'`
 	pushd src && rm -rf `cat ../.gitignore | sed -e 's/#.*//'` && popd
 	pushd tests && rm -rf `cat ../.gitignore | sed -e 's/#.*//'` && popd
-	pushd submodules/context-alloc && git clean -dxf && popd
 
 vg-test-deque-new: test-deque-new
 	./libtool --mode=execute valgrind -q ./test-deque-new
