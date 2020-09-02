@@ -61,34 +61,26 @@ int test_deque_custom_allocator()
 	int failures = 0;
 	struct deque_s *deque;
 	struct mem_context ctx = { 0, 0, 0, 0, 0 };
-	unsigned allocs = 0;
 
 	deque = deque_new_custom_allocator(test_malloc, test_free, &ctx);
-	++allocs;
-	++allocs;
 
 	failures += check_size_t_m(deque->size(deque), 0, "initial size");
 
 	failures += check_ptr_m(deque->pop(deque), NULL, "pop size 0");
 
 	deque->push(deque, "one");
-	++allocs;
 	deque->push(deque, "two");
-	++allocs;
 	deque->push(deque, "three");
-	++allocs;
 
 	failures += check_size_t_m(deque->size(deque), 3, "size A");
 
 	deque->unshift(deque, "zero");
-	++allocs;
 
 	failures += check_size_t_m(deque->size(deque), 4, "size B");
 
 	failures += check_str_m((char *)deque->pop(deque), "three", "pop1");
 
 	deque->push(deque, "four");
-	++allocs;
 
 	failures += check_str_m((char *)deque->shift(deque), "zero", "shift1");
 	failures += check_str_m((char *)deque->shift(deque), "one", "shift2");
@@ -100,8 +92,7 @@ int test_deque_custom_allocator()
 
 	deque_free(deque);
 
-	failures += check_unsigned_int_m(ctx.allocs, allocs, "ctx.allocs");
-	failures += check_unsigned_int_m(ctx.frees, allocs, "ctx.freess");
+	failures += check_unsigned_int_m(ctx.allocs, ctx.frees, "frees,allocs");
 	failures += check_unsigned_int_m(ctx.alloc_bytes > 0, 1, "bytes > 0");
 	failures +=
 	    check_unsigned_int_m(ctx.free_bytes, ctx.alloc_bytes, "bytes");

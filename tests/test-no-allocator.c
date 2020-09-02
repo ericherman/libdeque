@@ -1,16 +1,32 @@
 /* SPDX-License-Identifier: LGPL-3.0-or-later */
-/* test-push-pop.c */
-/* Copyright (C) 2016, 2019, 2020 Eric Herman <eric@freesa.org> */
+/* test-custom-allocator.c */
+/* Copyright (C) 2016, 2019 Eric Herman <eric@freesa.org> */
 
 #include "test-deque.h"
+#include <string.h>		/* memcpy */
 
-int test_deque_push_pop(void)
+#define BYTES_LEN 1000
+
+void *deque_no_alloc(void *context, size_t size);
+
+int test_deque_new_no_allocator(void)
 {
-	size_t i;
 	int failures = 0;
 	struct deque_s *deque;
+	unsigned char bytes[BYTES_LEN];
+	size_t bytes_len = BYTES_LEN;
+	void *foo;
 
-	deque = deque_new();
+	foo = deque_no_alloc(NULL, 1);
+	failures += check_ptr(NULL, foo);
+
+	deque = deque_new_no_allocator(NULL, 0);
+	failures += check_ptr(deque, NULL);
+
+	deque = deque_new_no_allocator(bytes, 2);
+	failures += check_ptr(deque, NULL);
+
+	deque = deque_new_no_allocator(bytes, bytes_len);
 
 	failures += check_size_t_m(deque->size(deque), 0, "initial size");
 
@@ -36,27 +52,9 @@ int test_deque_push_pop(void)
 	failures += check_str_m((char *)deque->pop(deque), "four", "pop2");
 	failures += check_str_m((char *)deque->pop(deque), "two", "pop3");
 
-	for (i = 0; i < 100; ++i) {
-		deque->push(deque, "foo");
-	}
-	for (i = 0; i < 100; ++i) {
-		deque->pop(deque);
-	}
-	for (i = 0; i < 1000; ++i) {
-		deque->unshift(deque, "foo");
-	}
-	for (i = 0; i < 1000; ++i) {
-		deque->shift(deque);
-	}
-
 	failures += check_size_t_m(deque->size(deque), 0, "size C");
 
-	failures += check_str_m((char *)deque->shift(deque), NULL, "shift3");
-	failures += check_ptr_m(deque->unshift(deque, "foo"), deque, "unshift");
-	failures += check_str_m((char *)deque->shift(deque), "foo", "shift4");
-
-	deque_free(deque);
 	return failures;
 }
 
-TEST_DEQUE_MAIN(test_deque_push_pop())
+TEST_DEQUE_MAIN(test_deque_new_no_allocator())

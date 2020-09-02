@@ -33,6 +33,7 @@ test-*-static
 test-deque
 test-custom-allocator
 test-deque-new
+test-no-allocator
 test-out-of-memory
 test-peek
 test-push-pop

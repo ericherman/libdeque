@@ -1,3 +1,33 @@
+2020-09-02  Eric Herman <eric@freesa.org>
+
+	Version 4.1.0 changes the internal implementation to use an array
+	rather than a linked list.
+
+	Added a new constructor:
+
+		deque_new_no_allocator(unsigned char *bytes, size_t bytes_len)
+
+	The "bytes" array should be 256 bytes or larger to ensure enough room
+	for struct internal allocation as well as the deque user-data.
+
+	The code can be used in a freestanding no-libc fashion if macros are
+	defined for the following operations:
+		Deque_memmove(dest, src, n)
+		Deque_memcpy(dest, src, n)
+	If these macros are not defined, string.h is included and memmove and
+	memcpy are used.
+
+	* src/deque.h: new byte-array based no-allocator constructor
+	* src/deque.c: array, not linked list, add new constructor
+	* tests/test-custom-allocator.c: don't assert a specific alloc count
+	* tests/test-out-of-memory.c: printf on failure, may not need to alloc
+	* tests/test-push-pop.c: enough ops to force some re-allocs
+	* tests/test-no-allocator.c: new test
+	* Makefile.am: test-no-allocator
+	* configure.ac: version bump to 4.1.0
+	* .gitignore: ignore test-no-allocator
+
+
 2020-03-16  Eric Herman <eric@freesa.org>
 
 	Version 4.0.0 changes the argument order of the malloc/free

@@ -24,6 +24,16 @@ Instead, if needed, a custom allocator can be provided:
 	struct deque_s *deque;
 	deque = deque_new_custom_allocator(myalloc, myfree, mycontext);
 
+Or a size-bounded deque can be constructed from a byte array:
+
+	unsigned char bytes[1024];
+	struct deque_s *deque;
+	deque = deque_new_no_allocator(bytes, 1024);
+
+(The space for the deque struct and its opaque internal data are
+allocated from the byte array which is passed in. As such it's good to
+provide an extra 256 bytes to accomodate these.)
+
 Items can be added to either end of the deque using the "push" and
 "unshift" member functions. Items can be remonved from either end of the
 deque using the "pop" and "shift" member functions. Each of these
@@ -72,10 +82,14 @@ Compile with the "-ldeque" lib:
 
 Dependencies
 ------------
-None.
+No external runtime dependencies.
 
-( The tests depend upon libecheck, which is included in the tests dir.
-See also: https://github.com/ericherman/libecheck )
+Building requires "context-alloc" which is included in the submodules
+directory, as well as the GNU autotools (automake, libtool, autconf).
+See also: https://github.com/ericherman/context-alloc
+
+( The tests depend upon libecheck, which is included in the submodules
+directory. See also: https://github.com/ericherman/libecheck )
 
 
 Cloning
@@ -86,7 +100,8 @@ git clone -o upstream https://github.com/ericherman/libdeque.git &&
  autoreconf -iv &&
  ./configure &&
  make -j check &&
- make spotless
+ git clean -dxf &&
+ git submodule foreach --recursive git clean -dxf
 
 
 Building on linux from a release tar

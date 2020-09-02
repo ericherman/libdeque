@@ -17,7 +17,8 @@ endif
 AM_CFLAGS=-std=c89 \
 	-Wall -Wextra -Wpedantic -Werror \
 	$(BUILD_TYPE_CFLAGS) \
-	-I./submodules/context-alloc/src -I../../submodules/context-alloc/src \
+	-I./submodules/context-alloc/src \
+	-I../../submodules/context-alloc/src \
 	-pipe
 
 AM_LDFLAGS=$(BUILD_TYPE_LDFLAGS)
@@ -35,6 +36,7 @@ check_PROGRAMS=\
  test-push-pop \
  test-peek \
  test-custom-allocator \
+ test-no-allocator \
  test-out-of-memory
 
 T_LDADD=libdeque.la
@@ -59,6 +61,10 @@ test_peek_LDADD=$(T_LDADD)
 test_custom_allocator_SOURCES=$(TEST_COMMON_SOURCES) \
  tests/test-custom-allocator.c
 test_custom_allocator_LDADD=$(T_LDADD)
+
+test_no_allocator_SOURCES=$(TEST_COMMON_SOURCES) \
+ tests/test-no-allocator.c
+test_no_allocator_LDADD=$(T_LDADD)
 
 test_out_of_memory_SOURCES=$(TEST_COMMON_SOURCES) tests/test-out-of-memory.c
 test_out_of_memory_LDADD=$(T_LDADD)
@@ -104,11 +110,15 @@ vg-test-peek: test-peek
 vg-test-custom-allocator: test-custom-allocator
 	./libtool --mode=execute valgrind -q ./test-custom-allocator
 
+vg-test-no-allocator: test-no-allocator
+	./libtool --mode=execute valgrind -q ./test-no-allocator
+
 vg-test-out-of-memory: test-out-of-memory
 	./libtool --mode=execute valgrind -q ./test-out-of-memory
 
 
 valgrind: \
+	vg-test-no-allocator \
 	vg-test-custom-allocator \
 	vg-test-deque-new \
 	vg-test-out-of-memory \

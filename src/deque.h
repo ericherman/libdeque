@@ -59,6 +59,10 @@ struct deque_s *deque_new_custom_allocator(context_malloc_func mfunc,
 					   context_free_func mfree,
 					   void *mcontext);
 
+/* this is a size-bounded deque, it is recommended that at least 256 bytes
+ * extra is provided for the deque struct and opaque data */
+struct deque_s *deque_new_no_allocator(unsigned char *bytes, size_t bytes_len);
+
 void deque_free(struct deque_s *d);
 
 Deque_end_C_functions

@@ -25,6 +25,8 @@ int test_out_of_memory_push(unsigned long malloc_fail_bitmask)
 	if (!deque) {
 		++err;
 		if (!malloc_fail_bitmask) {
+			fprintf(stderr, "%s:%d deque_new_custom_allocator\n",
+				__FILE__, __LINE__);
 			++failures;
 		}
 		goto end_test_out_of_memory;
@@ -35,6 +37,8 @@ int test_out_of_memory_push(unsigned long malloc_fail_bitmask)
 		if (!rv) {
 			++err;
 			if (!malloc_fail_bitmask) {
+				fprintf(stderr, "%s:%d push\n", __FILE__,
+					__LINE__);
 				++failures;
 			}
 		}
@@ -42,14 +46,21 @@ int test_out_of_memory_push(unsigned long malloc_fail_bitmask)
 		if (!rv) {
 			++err;
 			if (!malloc_fail_bitmask) {
+				fprintf(stderr, "%s:%d unshift\n", __FILE__,
+					__LINE__);
 				++failures;
 			}
 		}
 	}
 
 	if (!err && malloc_fail_bitmask) {
-		++failures;
+		if (mctx.allocs < 3) {
+			fprintf(stderr, "%s:%d only %lu mallocs?\n", __FILE__,
+				__LINE__, (unsigned long)mctx.allocs);
+			++failures;
+		}
 	}
+
 	if (err && !malloc_fail_bitmask) {
 		++failures;
 	}
