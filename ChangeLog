@@ -1,3 +1,27 @@
+2020-09-03  Eric Herman <eric@freesa.org>
+
+	API Breaking Changes:
+	- struct is renamed and typedef to oldname
+	- peek_top() and peek_bottom() now take an additional index arg
+	  which allows one to index into the deque from either side
+	- a new for_each() method is added for internal iteration
+	- a new clear() method is added
+
+	* src/deque.h:
+	* src/deque.c: type
+	* README: type name, indexed peeking, for_each, clear
+	* tests/test-iteration.c: test "for_each"
+	* tests/test-peek.c: add index offset to peaking
+	* tests/test-custom-allocator.c: type name
+	* tests/test-deque-new.c: type name
+	* tests/test-no-allocator.c: type name
+	* tests/test-out-of-memory.c: type name
+	* tests/test-push-pop.c: type name
+	* Makefile.am: test-iteration
+	* configure.ac: version bump to 5.0.0
+	* .gitignore: test-iteration
+
+
 2020-09-02  Eric Herman <eric@freesa.org>
 
 	Version 4.1.0 changes the internal implementation to use an array

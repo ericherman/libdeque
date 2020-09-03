@@ -7,7 +7,7 @@
 int test_deque_new()
 {
 	int failures = 0;
-	struct deque_s *deque;
+	deque_s *deque;
 
 	deque = deque_new();
 

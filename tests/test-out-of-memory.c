@@ -14,8 +14,8 @@ int test_out_of_memory_push(unsigned long malloc_fail_bitmask)
 	context_malloc_func ctx_alloc = oom_injecting_malloc;
 	context_free_func ctx_free = oom_injecting_free;
 	oom_injecting_context_s mctx;
-	struct deque_s *deque;
-	struct deque_s *rv;
+	deque_s *deque;
+	deque_s *rv;
 
 	oom_injecting_context_init(&mctx);
 

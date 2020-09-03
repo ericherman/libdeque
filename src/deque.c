@@ -61,14 +61,14 @@ struct deque_data {
 	void *mem_context;
 };
 
-static struct deque_data *deque_get_internal_data(struct deque_s *deque)
+static struct deque_data *deque_get_internal_data(deque_s *deque)
 {
 	assert(deque != NULL);
 	assert(deque->opaque_data != NULL);
 	return (struct deque_data *)deque->opaque_data;
 }
 
-static void deque_set_internal_data(struct deque_s *deque, struct deque_data *d)
+static void deque_set_internal_data(deque_s *deque, struct deque_data *d)
 {
 	assert(deque != NULL);
 	assert(d != NULL);
@@ -76,30 +76,41 @@ static void deque_set_internal_data(struct deque_s *deque, struct deque_data *d)
 	deque->opaque_data = (void *)d;
 }
 
-static void *deque_peek_top(struct deque_s *deque)
+static void *deque_peek_top(deque_s *deque, size_t index)
 {
+	size_t i = 0;
 	struct deque_data *d = deque_get_internal_data(deque);
 
 	if (d->first_pos == d->end_pos) {
 		return NULL;
 	}
+	if (index >= d->end_pos) {
+		return NULL;
+	}
+	i = d->end_pos - (index + 1);
+	if (i < d->first_pos) {
+		return NULL;
+	}
 
-	assert(d->end_pos > 0);
-
-	return d->data_space[d->end_pos - 1];
+	return d->data_space[i];
 }
 
-static void *deque_peek_bottom(struct deque_s *deque)
+static void *deque_peek_bottom(deque_s *deque, size_t index)
 {
+	size_t i = 0;
 	struct deque_data *d = deque_get_internal_data(deque);
 
 	if (d->first_pos == d->end_pos) {
 		return NULL;
 	}
-	return d->data_space[d->first_pos];
+	i = index + d->first_pos;
+	if (i >= d->end_pos) {
+		return NULL;
+	}
+	return d->data_space[i];
 }
 
-static size_t deque_size(struct deque_s *deque)
+static size_t deque_size(deque_s *deque)
 {
 	struct deque_data *d = deque_get_internal_data(deque);
 
@@ -107,7 +118,7 @@ static size_t deque_size(struct deque_s *deque)
 	return d->end_pos - d->first_pos;
 }
 
-static struct deque_s *deque_push(struct deque_s *deque, void *user_data)
+static deque_s *deque_push(deque_s *deque, void *user_data)
 {
 	struct deque_data *d = deque_get_internal_data(deque);
 
@@ -151,7 +162,7 @@ static struct deque_s *deque_push(struct deque_s *deque, void *user_data)
 	return deque;
 }
 
-static void *deque_pop(struct deque_s *deque)
+static void *deque_pop(deque_s *deque)
 {
 	void *user_data = NULL;
 	struct deque_data *d = deque_get_internal_data(deque);
@@ -169,7 +180,7 @@ static void *deque_pop(struct deque_s *deque)
 	return user_data;
 }
 
-static struct deque_s *deque_unshift(struct deque_s *deque, void *user_data)
+static deque_s *deque_unshift(deque_s *deque, void *user_data)
 {
 	struct deque_data *d = deque_get_internal_data(deque);
 
@@ -221,7 +232,7 @@ static struct deque_s *deque_unshift(struct deque_s *deque, void *user_data)
 	return deque;
 }
 
-static void *deque_shift(struct deque_s *deque)
+static void *deque_shift(deque_s *deque)
 {
 	void *user_data = NULL;
 	struct deque_data *d = deque_get_internal_data(deque);
@@ -247,10 +258,30 @@ static void *deque_shift(struct deque_s *deque)
 	return user_data;
 }
 
+static void deque_clear(deque_s *deque)
+{
+	struct deque_data *d = deque_get_internal_data(deque);
+	d->first_pos = Deque_default_unshift_space;
+	d->end_pos = d->first_pos;
+}
+
+static int deque_for_each(deque_s *deque, deque_iterator_func pfunc,
+			  void *context)
+{
+	size_t i, end;
+	struct deque_data *d = deque_get_internal_data(deque);
+
+	end = 0;
+	for (i = d->first_pos; i < d->end_pos && !end; ++i) {
+		end = (*pfunc) (deque, d->data_space[i], context);
+	}
+	return end;
+}
+
 static void deque_init(context_malloc_func mem_alloc,
 		       context_free_func mem_free,
 		       void *mem_context,
-		       struct deque_s *deque,
+		       deque_s *deque,
 		       struct deque_data *d,
 		       void **data_space, size_t data_space_len)
 {
@@ -268,23 +299,25 @@ static void deque_init(context_malloc_func mem_alloc,
 	deque->pop = deque_pop;
 	deque->unshift = deque_unshift;
 	deque->shift = deque_shift;
+	deque->clear = deque_clear;
 	deque->peek_top = deque_peek_top;
 	deque->peek_bottom = deque_peek_bottom;
 	deque->size = deque_size;
+	deque->for_each = deque_for_each;
 
 	deque_set_internal_data(deque, d);
 }
 
-struct deque_s *deque_new(void)
+deque_s *deque_new(void)
 {
 	return deque_new_custom_allocator(NULL, NULL, NULL);
 }
 
-struct deque_s *deque_new_custom_allocator(context_malloc_func mem_alloc,
-					   context_free_func mem_free,
-					   void *mem_context)
+deque_s *deque_new_custom_allocator(context_malloc_func mem_alloc,
+				    context_free_func mem_free,
+				    void *mem_context)
 {
-	struct deque_s *deque = NULL;
+	deque_s *deque = NULL;
 	struct deque_data *d = NULL;
 	size_t size = 0;
 	void **data_space = NULL;
@@ -296,8 +329,8 @@ struct deque_s *deque_new_custom_allocator(context_malloc_func mem_alloc,
 		mem_context = NULL;
 	}
 
-	size = sizeof(struct deque_s);
-	deque = (struct deque_s *)mem_alloc(mem_context, size);
+	size = sizeof(deque_s);
+	deque = (deque_s *)mem_alloc(mem_context, size);
 	if (!deque) {
 		return NULL;
 	}
@@ -330,13 +363,13 @@ void *deque_no_alloc(void *context, size_t size)
 	return NULL;
 }
 
-struct deque_s *deque_new_no_allocator(unsigned char *bytes, size_t bytes_len)
+deque_s *deque_new_no_allocator(unsigned char *bytes, size_t bytes_len)
 {
 	context_malloc_func mem_alloc = deque_no_alloc;
 	context_free_func mem_free = NULL;
 	void *mem_context = NULL;
 
-	struct deque_s *deque = NULL;
+	deque_s *deque = NULL;
 	struct deque_data *d = NULL;
 	void **data_space = NULL;
 	size_t data_space_len = 0;
@@ -349,7 +382,7 @@ struct deque_s *deque_new_no_allocator(unsigned char *bytes, size_t bytes_len)
 	}
 
 	/* we need at least room for the structs and the default length */
-	min_size = Deque_align(sizeof(struct deque_s))
+	min_size = Deque_align(sizeof(deque_s))
 	    + Deque_align(sizeof(struct deque_data))
 	    + (4 * sizeof(void *));
 
@@ -361,8 +394,8 @@ struct deque_s *deque_new_no_allocator(unsigned char *bytes, size_t bytes_len)
 		return NULL;
 	}
 
-	deque = (struct deque_s *)bytes;
-	used = Deque_align(sizeof(struct deque_s));
+	deque = (deque_s *)bytes;
+	used = Deque_align(sizeof(deque_s));
 	d = (struct deque_data *)(bytes + used);
 	used += Deque_align(sizeof(struct deque_data));
 	data_space = (void **)(bytes + used);
@@ -372,7 +405,7 @@ struct deque_s *deque_new_no_allocator(unsigned char *bytes, size_t bytes_len)
 	return deque;
 }
 
-void deque_free(struct deque_s *deque)
+void deque_free(deque_s *deque)
 {
 	struct deque_data *d = NULL;
 	context_free_func mem_free = NULL;

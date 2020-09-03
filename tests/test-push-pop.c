@@ -8,7 +8,7 @@ int test_deque_push_pop(void)
 {
 	size_t i;
 	int failures = 0;
-	struct deque_s *deque;
+	deque_s *deque;
 
 	deque = deque_new();
 
@@ -45,9 +45,7 @@ int test_deque_push_pop(void)
 	for (i = 0; i < 1000; ++i) {
 		deque->unshift(deque, "foo");
 	}
-	for (i = 0; i < 1000; ++i) {
-		deque->shift(deque);
-	}
+	deque->clear(deque);
 
 	failures += check_size_t_m(deque->size(deque), 0, "size C");
 

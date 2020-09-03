@@ -59,7 +59,7 @@ void test_free(void *context, void *ptr)
 int test_deque_custom_allocator()
 {
 	int failures = 0;
-	struct deque_s *deque;
+	deque_s *deque;
 	struct mem_context ctx = { 0, 0, 0, 0, 0 };
 
 	deque = deque_new_custom_allocator(test_malloc, test_free, &ctx);

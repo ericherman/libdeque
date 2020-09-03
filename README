@@ -17,17 +17,17 @@ Include the header file:
 
 New instaces are typically created with a call to the "deque_new" function:
 
-        struct deque_s *deque = deque_new();
+        deque_s *deque = deque_new();
 
 Instead, if needed, a custom allocator can be provided:
 
-	struct deque_s *deque;
+	deque_s *deque;
 	deque = deque_new_custom_allocator(myalloc, myfree, mycontext);
 
 Or a size-bounded deque can be constructed from a byte array:
 
 	unsigned char bytes[1024];
-	struct deque_s *deque;
+	deque_s *deque;
 	deque = deque_new_no_allocator(bytes, 1024);
 
 (The space for the deque struct and its opaque internal data are
@@ -56,16 +56,35 @@ data to be added:
 
 Additional member functions are provided which do not change the state
 of the deque, but give some information about the currect state. These
-functions are "size", "peek_top", and "peek_bottom":
+functions are "size", "peek_top", and "peek_bottom", which can be used
+for external iteration:
 
 	/* the number of items in the of the deque */
 	int size = deque->size(deque);
 
 	/* pointer to data at the end of the queue (or top of the stack) */
-	void *bar = deque->peek_top(deque);
+	void *foo = deque->peek_top(deque, 0);
+
+	/* pointer to data 2 in from the end of the queue */
+	void *bar = deque->peek_top(deque, 2);
 
 	/* pointer to data at the front of the queue (or bottom of the stack) */
-	void *butt_in = deque->peek_bottom(deque);
+	void *baz = deque->peek_bottom(deque, 0);
+
+	/* pointer to data 3 behind the front of the queue */
+	void *val = deque->peek_bottom(deque, 3);
+
+Additionally, there is a "for_each" method which takes a deque_iterator_func
+function pointer which is defined as:
+
+typedef int (*deque_iterator_func)(deque_s *d, void *each, void *context);
+
+And can be called like:
+
+	int x = deque->for_each(deque, my_func, my_context);
+
+The "for_each" function handles the iteration internally. It can be halted
+early if the "my_func" returns a non-zero value.
 
 Instances can be freed using the "deque_free" function. Of course, if
 the instance was created with a custom allocation and free functions,

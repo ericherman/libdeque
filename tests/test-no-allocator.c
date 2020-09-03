@@ -12,7 +12,7 @@ void *deque_no_alloc(void *context, size_t size);
 int test_deque_new_no_allocator(void)
 {
 	int failures = 0;
-	struct deque_s *deque;
+	deque_s *deque;
 	unsigned char bytes[BYTES_LEN];
 	size_t bytes_len = BYTES_LEN;
 	void *foo;

@@ -3,7 +3,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.69])
-AC_INIT([libdeque], [4.1.0], [eric@freesa.org])
+AC_INIT([libdeque], [5.0.0], [eric@freesa.org])
 AC_CONFIG_SRCDIR([src/deque.h])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_AUX_DIR([build-aux])
@@ -30,12 +30,12 @@ AC_FUNC_MALLOC
 AC_ARG_ENABLE(debug,
 AS_HELP_STRING([--enable-debug],
                [enable debugging, default: no]),
-[case "${enableval}" in
-             yes) debug=true ;;
-             no)  debug=false ;;
-             *)   AC_MSG_ERROR([bad value ${enableval} for --enable-debug]) ;;
-esac],
-[debug=false])
+		[case "${enableval}" in
+		             yes) debug=true ;;
+		             no)  debug=false ;;
+		             *)   AC_MSG_ERROR([bad value ${enableval} for --enable-debug]) ;;
+		esac],
+		[debug=false])
 AM_CONDITIONAL(DEBUG, test x"$debug" = x"true")
 
 AM_INIT_AUTOMAKE([subdir-objects -Werror -Wall])
