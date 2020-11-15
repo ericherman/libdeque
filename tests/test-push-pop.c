@@ -11,6 +11,11 @@ int test_deque_push_pop(void)
 	deque_s *deque;
 
 	deque = deque_new();
+	if (!deque) {
+		check_int(deque != NULL ? 1 : 0, 1);
+		++failures;
+		return failures;
+	}
 
 	failures += check_size_t_m(deque->size(deque), 0, "initial size");
 

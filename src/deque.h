@@ -70,8 +70,11 @@ struct deque {
 	int (*for_each)(deque_s *d, deque_iterator_func func, void *context);
 };
 
-/* function pointer typedefs for ease of use in full constructor */
+#ifdef ARDUINO
+#include "context-alloc.h"
+#else
 #include <context-alloc.h>
+#endif
 /* constructors */
 /* uses libc malloc and free */
 deque_s *deque_new(void);

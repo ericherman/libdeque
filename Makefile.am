@@ -17,8 +17,10 @@ endif
 AM_CFLAGS=-std=c89 \
 	-Wall -Wextra -Wpedantic -Werror \
 	$(BUILD_TYPE_CFLAGS) \
+	-I./src \
 	-I./submodules/context-alloc/src \
-	-I../../submodules/context-alloc/src \
+	-I./submodules/context-alloc/util \
+	-I./submodules/libecheck/src \
 	-pipe
 
 AM_LDFLAGS=$(BUILD_TYPE_LDFLAGS)
@@ -95,7 +97,8 @@ tidy:
 		-T FILE \
 		-T size_t \
 		-T deque_s \
-		`find src tests -name '*.h' -o -name '*.c'`
+		`find src tests -name '*.h' -o -name '*.c'` \
+		deque_test_arduino/deque_test_arduino.ino
 
 spotless:
 	rm -rf `cat .gitignore | sed -e 's/#.*//'`

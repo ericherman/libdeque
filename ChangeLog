@@ -4,6 +4,13 @@
 
 	* src/deque.h: add the deque_memmove function pointer
 	* src/deque.c: default deque_memmove to memmove or deque_diy_memmove
+	* tests/test-deque.h: remove references to stdlib, printf
+	* tests/test-custom-allocator.c: replace memcpy with deque_memmove
+	* tests/test-iteration.c: replace strcat, strcmp with test_diy funcs
+	* tests/test-no-allocator.c: remove old include
+	* tests/test-out-of-memory.c: fprintf to echeck_default_log->append
+	* deque_test_arduino/deque_test_arduino.ino: run tests on Arduino
+	* Makefile.am: adjust include paths
 
 2020-09-03  Eric Herman <eric@freesa.org>
 

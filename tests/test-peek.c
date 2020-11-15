@@ -10,6 +10,11 @@ int test_peek(void)
 	deque_s *deque;
 
 	deque = deque_new();
+	if (!deque) {
+		check_int(deque != NULL ? 1 : 0, 1);
+		++failures;
+		return failures;
+	}
 
 	failures += check_ptr_m(deque->peek_top(deque, 0), NULL, "top 0 0");
 	failures += check_ptr_m(deque->peek_bottom(deque, 0), NULL, "bot 0 0");

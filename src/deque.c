@@ -203,7 +203,8 @@ static deque_s *deque_push(deque_s *deque, void *user_data)
 			/* allow some free space for unshifting */
 			size_t pos_shift = Deque_default_unshift_space;
 			void **old_space = d->data_space;
-			void **new_space = d->mem_alloc(d->mem_context, size);
+			void **new_space =
+			    (void **)d->mem_alloc(d->mem_context, size);
 			if (!new_space) {
 				return NULL;
 			}
@@ -269,7 +270,8 @@ static deque_s *deque_unshift(deque_s *deque, void *user_data)
 			/* give half the new space to front for unshifting */
 			size_t pos_shift = new_space_len / 2;
 			void **old_space = d->data_space;
-			void **new_space = d->mem_alloc(d->mem_context, size);
+			void **new_space =
+			    (void **)d->mem_alloc(d->mem_context, size);
 			if (!new_space) {
 				return NULL;
 			}

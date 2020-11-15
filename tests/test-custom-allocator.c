@@ -3,7 +3,6 @@
 /* Copyright (C) 2016, 2019 Eric Herman <eric@freesa.org> */
 
 #include "test-deque.h"
-#include <string.h>		/* memcpy */
 
 struct mem_context {
 	unsigned allocs;
@@ -28,7 +27,7 @@ void *test_malloc(void *context, size_t size)
 		++ctx->allocs;
 		ctx->alloc_bytes += size;
 		/* stash the size in the bytes allocated */
-		memcpy(sneaky_stash, &size, sizeof(size_t));
+		deque_memmove(sneaky_stash, &size, sizeof(size_t));
 		/* set the application pointer */
 		ptr = (void *)(sneaky_stash + sizeof(size_t));
 	}
@@ -48,7 +47,7 @@ void test_free(void *context, void *ptr)
 		/* retreive the allocated sneaky stash pointer */
 		sneaky_stash = ((unsigned char *)ptr) - sizeof(size_t);
 		/* fetch the size from the stash */
-		memcpy(&size, sneaky_stash, sizeof(size_t));
+		deque_memmove(&size, sneaky_stash, sizeof(size_t));
 
 		++ctx->frees;
 		ctx->free_bytes += size;
@@ -63,6 +62,10 @@ int test_deque_custom_allocator()
 	struct mem_context ctx = { 0, 0, 0, 0, 0 };
 
 	deque = deque_new_custom_allocator(test_malloc, test_free, &ctx);
+	if (!deque) {
+		check_int(deque != NULL ? 1 : 0, 1);
+		return 1;
+	}
 
 	failures += check_size_t_m(deque->size(deque), 0, "initial size");
 

@@ -3,7 +3,6 @@
 /* Copyright (C) 2016, 2019 Eric Herman <eric@freesa.org> */
 
 #include "test-deque.h"
-#include <string.h>		/* memcpy */
 
 #define BYTES_LEN 1000
 
@@ -27,6 +26,11 @@ int test_deque_new_no_allocator(void)
 	failures += check_ptr(deque, NULL);
 
 	deque = deque_new_no_allocator(bytes, bytes_len);
+	if (!deque) {
+		check_int(deque != NULL ? 1 : 0, 1);
+		++failures;
+		return failures;
+	}
 
 	failures += check_size_t_m(deque->size(deque), 0, "initial size");
 

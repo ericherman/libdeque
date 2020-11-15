@@ -3,11 +3,11 @@
 /* Copyright (C) 2016, 2019, 2020 Eric Herman <eric@freesa.org> */
 
 #include "test-deque.h"
-
-#include <string.h>
+#include "oom-injecting-malloc.h"
 
 int test_out_of_memory_push(unsigned long malloc_fail_bitmask)
 {
+	struct echeck_log *elog = echeck_default_log;
 	int failures = 0;
 	int err = 0;
 	size_t i;
@@ -25,8 +25,11 @@ int test_out_of_memory_push(unsigned long malloc_fail_bitmask)
 	if (!deque) {
 		++err;
 		if (!malloc_fail_bitmask) {
-			fprintf(stderr, "%s:%d deque_new_custom_allocator\n",
-				__FILE__, __LINE__);
+			elog->append_s(elog, __FILE__);
+			elog->append_s(elog, ":");
+			elog->append_l(elog, __LINE__);
+			elog->append_s(elog, " deque_new_custom_allocator");
+			elog->append_eol(elog);
 			++failures;
 		}
 		goto end_test_out_of_memory;
@@ -37,8 +40,11 @@ int test_out_of_memory_push(unsigned long malloc_fail_bitmask)
 		if (!rv) {
 			++err;
 			if (!malloc_fail_bitmask) {
-				fprintf(stderr, "%s:%d push\n", __FILE__,
-					__LINE__);
+				elog->append_s(elog, __FILE__);
+				elog->append_s(elog, ":");
+				elog->append_l(elog, __LINE__);
+				elog->append_s(elog, " push");
+				elog->append_eol(elog);
 				++failures;
 			}
 		}
@@ -46,8 +52,11 @@ int test_out_of_memory_push(unsigned long malloc_fail_bitmask)
 		if (!rv) {
 			++err;
 			if (!malloc_fail_bitmask) {
-				fprintf(stderr, "%s:%d unshift\n", __FILE__,
-					__LINE__);
+				elog->append_s(elog, __FILE__);
+				elog->append_s(elog, ":");
+				elog->append_l(elog, __LINE__);
+				elog->append_s(elog, " unshift");
+				elog->append_eol(elog);
 				++failures;
 			}
 		}
@@ -55,8 +64,13 @@ int test_out_of_memory_push(unsigned long malloc_fail_bitmask)
 
 	if (!err && malloc_fail_bitmask) {
 		if (mctx.allocs < 3) {
-			fprintf(stderr, "%s:%d only %lu mallocs?\n", __FILE__,
-				__LINE__, (unsigned long)mctx.allocs);
+			elog->append_s(elog, __FILE__);
+			elog->append_s(elog, ":");
+			elog->append_l(elog, __LINE__);
+			elog->append_s(elog, " only ");
+			elog->append_ul(elog, (unsigned long)mctx.allocs);
+			elog->append_s(elog, " mallocs?");
+			elog->append_eol(elog);
 			++failures;
 		}
 	}

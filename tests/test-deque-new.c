@@ -11,8 +11,9 @@ int test_deque_new()
 
 	deque = deque_new();
 
-	if (deque == NULL) {
-		++failures;
+	if (!deque) {
+		check_int(deque != NULL ? 1 : 0, 1);
+		return 1;
 	}
 
 	failures += check_unsigned_int_m(deque->size(deque), 0, "deque_size");
