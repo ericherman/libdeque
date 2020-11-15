@@ -10,18 +10,77 @@
 */
 #include "deque.h"
 
-#ifndef assert
+#ifdef ARDUINO
+#define DEQUE_HOSTED 0
+#endif
+
+#ifndef DEQUE_HOSTED
+/*
+ __STDC_HOSTED__
+ The integer constant 1 if the implementation is a hosted
+ implementation or the integer constant 0 if it is not.
+
+ C99 standard (section 6.10.8):
+ http://www.open-std.org/jtc1/sc22/WG14/www/docs/n1256.pdf
+
+ C++11 standard (section 16.8):
+ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2012/n3337.pdf
+
+ "The standard also defines two environments for programs, a
+ freestanding environment, required of all implementations and which
+ may not have library facilities beyond those required of
+ freestanding implementations, where the handling of program startup
+ and termination are implementation-defined; and a hosted
+ environment, which is not required, in which all the library
+ facilities are provided and startup is through a function int main
+ (void) or int main (int, char *[]). An OS kernel is an example of a
+ program running in a freestanding environment; a program using the
+ facilities of an operating system is an example of a program
+ running in a hosted environment."
+ https://gcc.gnu.org/onlinedocs/gcc/Standards.html
+*/
+#ifdef __STDC_HOSTED__
+#define DEQUE_HOSTED __STDC_HOSTED__
+#else
+/* guess? */
+#define DEQUE_HOSTED 1
+#endif
+#endif
+
+#ifndef deque_assert
+#if DEQUE_HOSTED
 #include <assert.h>
+#define deque_assert(expr) assert(expr)
+#else
+#define deque_assert(expr) ((void)0)
+#endif
 #endif
 
-#ifndef Deque_memmove
+#if DEQUE_HOSTED
 #include <string.h>
-#define Deque_memmove(dest, src, n) memmove(dest, src, n)
-#endif
+void *(*deque_memmove)(void *dest, const void *src, size_t n) = memmove;
+void *(*deque_memcpy)(void *dest, const void *src, size_t n) = memcpy;
+#else
+void *deque_diy_memmove(void *d, const void *s, size_t n)
+{
+	const unsigned char *src = (const unsigned char *)s;
+	unsigned char *dest = (unsigned char *)d;
+	size_t i;
 
-#ifndef Deque_memcpy
-#include <string.h>
-#define Deque_memcpy(dest, src, n) memcpy(dest, src, n)
+	if (src < dest && dest < src + n) {
+		for (i = n; i; i--) {
+			dest[i - 1] = src[i - 1];
+		}
+	} else {
+		for (i = 0; i < n; ++i) {
+			dest[i] = src[i];
+		}
+	}
+	return d;
+}
+
+void *(*deque_memmove)(void *d, const void *s, size_t n) = deque_diy_memmove;
+void *(*deque_memcpy)(void *d, const void *s, size_t n) = deque_diy_memmove;
 #endif
 
 #ifndef Deque_default_len
@@ -63,16 +122,16 @@ struct deque_data {
 
 static struct deque_data *deque_get_internal_data(deque_s *deque)
 {
-	assert(deque != NULL);
-	assert(deque->opaque_data != NULL);
+	deque_assert(deque != NULL);
+	deque_assert(deque->opaque_data != NULL);
 	return (struct deque_data *)deque->opaque_data;
 }
 
 static void deque_set_internal_data(deque_s *deque, struct deque_data *d)
 {
-	assert(deque != NULL);
-	assert(d != NULL);
-	assert(deque->opaque_data == NULL);
+	deque_assert(deque != NULL);
+	deque_assert(d != NULL);
+	deque_assert(deque->opaque_data == NULL);
 	deque->opaque_data = (void *)d;
 }
 
@@ -130,8 +189,8 @@ static deque_s *deque_push(deque_s *deque, void *user_data)
 			size_t new_first_pos = d->first_pos / 2;
 			size_t pos_shift = d->first_pos - new_first_pos;
 			size_t used = d->end_pos - d->first_pos;
-			assert(pos_shift > 0);
-			Deque_memmove(&d->data_space[new_first_pos],
+			deque_assert(pos_shift > 0);
+			deque_memmove(&d->data_space[new_first_pos],
 				      &d->data_space[d->first_pos],
 				      sizeof(void *) * used);
 			d->first_pos -= pos_shift;
@@ -148,7 +207,7 @@ static deque_s *deque_push(deque_s *deque, void *user_data)
 			if (!new_space) {
 				return NULL;
 			}
-			Deque_memcpy(new_space + pos_shift, old_space,
+			deque_memcpy(new_space + pos_shift, old_space,
 				     old_space_len);
 			d->mem_free(d->mem_context, old_space);
 			d->data_space = new_space;
@@ -157,7 +216,7 @@ static deque_s *deque_push(deque_s *deque, void *user_data)
 			d->end_pos += pos_shift;
 		}
 	}
-	assert(d->end_pos < d->data_space_len);
+	deque_assert(d->end_pos < d->data_space_len);
 	d->data_space[d->end_pos++] = user_data;
 	return deque;
 }
@@ -171,11 +230,11 @@ static void *deque_pop(deque_s *deque)
 		return NULL;
 	}
 
-	assert(d->end_pos > 0);
+	deque_assert(d->end_pos > 0);
 
 	user_data = d->data_space[--d->end_pos];
 
-	assert(d->first_pos <= d->end_pos);
+	deque_assert(d->first_pos <= d->end_pos);
 
 	return user_data;
 }
@@ -197,7 +256,7 @@ static deque_s *deque_unshift(deque_s *deque, void *user_data)
 			size_t avail = d->data_space_len - d->end_pos;
 			size_t pos_shift = 1 + (avail / 2);
 			size_t size = sizeof(void *) * d->end_pos;
-			Deque_memmove(&d->data_space[pos_shift], d->data_space,
+			deque_memmove(&d->data_space[pos_shift], d->data_space,
 				      size);
 			d->first_pos += pos_shift;
 			d->end_pos += pos_shift;
@@ -214,7 +273,7 @@ static deque_s *deque_unshift(deque_s *deque, void *user_data)
 			if (!new_space) {
 				return NULL;
 			}
-			Deque_memcpy(new_space + pos_shift, old_space,
+			deque_memcpy(new_space + pos_shift, old_space,
 				     old_size);
 			d->mem_free(d->mem_context, old_space);
 			d->data_space = new_space;
@@ -223,11 +282,11 @@ static deque_s *deque_unshift(deque_s *deque, void *user_data)
 			d->end_pos += pos_shift;
 		}
 	}
-	assert(d->first_pos > 0);
+	deque_assert(d->first_pos > 0);
 
 	d->data_space[--d->first_pos] = user_data;
 
-	assert(d->first_pos <= d->end_pos);
+	deque_assert(d->first_pos <= d->end_pos);
 
 	return deque;
 }
@@ -243,7 +302,7 @@ static void *deque_shift(deque_s *deque)
 		return NULL;
 	}
 
-	assert(d->first_pos < d->data_space_len);
+	deque_assert(d->first_pos < d->data_space_len);
 
 	user_data = d->data_space[d->first_pos++];
 
@@ -253,7 +312,7 @@ static void *deque_shift(deque_s *deque)
 		d->end_pos = pos;
 	}
 
-	assert(d->first_pos <= d->end_pos);
+	deque_assert(d->first_pos <= d->end_pos);
 
 	return user_data;
 }
@@ -388,7 +447,7 @@ deque_s *deque_new_no_allocator(unsigned char *bytes, size_t bytes_len)
 
 	/* if we grow more than 256 bytes, we should bump the version
 	 * and update deque.h and docs */
-	assert(min_size <= 256);
+	deque_assert(min_size <= 256);
 
 	if (bytes_len < min_size) {
 		return NULL;

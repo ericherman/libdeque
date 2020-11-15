@@ -1,3 +1,10 @@
+2020-11-15  Eric Herman <eric@freesa.org>
+
+	Improve support for Freestanding environments
+
+	* src/deque.h: add the deque_memmove function pointer
+	* src/deque.c: default deque_memmove to memmove or deque_diy_memmove
+
 2020-09-03  Eric Herman <eric@freesa.org>
 
 	API Breaking Changes:

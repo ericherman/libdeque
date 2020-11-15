@@ -20,8 +20,19 @@
 #define Deque_end_C_functions
 #endif
 
+Deque_begin_C_functions
+#undef Deque_begin_C_functions
+/*
+ * freesting headers are safe to include
+ */
 #include <stddef.h>		/* size_t */
+/*
+ * pointer to the memmove function which is part of the hosted standard C
+ * library, but may not be available in freestanding environments:
+ */
+extern void *(*deque_memmove)(void *dest, const void *src, size_t n);
 
+/* forward declaration of the deque type */
 struct deque;
 typedef struct deque deque_s;
 
@@ -59,8 +70,6 @@ struct deque {
 	int (*for_each)(deque_s *d, deque_iterator_func func, void *context);
 };
 
-Deque_begin_C_functions
-#undef Deque_begin_C_functions
 /* function pointer typedefs for ease of use in full constructor */
 #include <context-alloc.h>
 /* constructors */
