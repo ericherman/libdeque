@@ -98,7 +98,7 @@ tidy:
 		-T size_t \
 		-T deque_s \
 		`find src tests -name '*.h' -o -name '*.c'` \
-		deque_test_arduino/deque_test_arduino.ino
+		deque_tests_arduino/deque_tests_arduino.ino
 
 spotless:
 	rm -rf `cat .gitignore | sed -e 's/#.*//'`
