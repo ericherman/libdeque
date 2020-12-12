@@ -6,19 +6,18 @@
 #include <Arduino.h>
 #include <HardwareSerial.h>
 #include "deque.h"
-#include "oom-injecting-malloc.h"
-#include "echeck-arduino.h"
+#include "eembed-arduino.h"
 
-const unsigned long Serial_baud = 115200;
+const unsigned long Serial_baud = 9600;
 
 /* the deque test functions */
-int test_deque_custom_allocator(void);
-int test_deque_new_no_allocator(void);
-int test_deque_new(void);
-int test_deque_push_pop(void);
-int test_iteration(void);
-int test_out_of_memory(void);
-int test_peek(void);
+unsigned test_deque_custom_allocator(void);
+unsigned test_deque_new_no_allocator(void);
+unsigned test_deque_new(void);
+unsigned test_deque_push_pop(void);
+unsigned test_iteration(void);
+unsigned test_out_of_memory(void);
+unsigned test_peek(void);
 
 /* Keep Bogus_allocator_buflen under 256 bytes in order to keep the
    whole SRAM usage (including stack needs) down to under 2.5k (or
@@ -63,7 +62,7 @@ void setup(void)
 
 	Serial.println("echeck_arduino_serial_log_init");
 	delay(50);
-	echeck_arduino_serial_log_init();
+	eembed_arduino_serial_log_init();
 
 	Serial.println("bogus_allocator_init");
 	delay(50);
@@ -79,12 +78,12 @@ void setup(void)
 	loop_count = 0;
 }
 
-int test_func(const char *name, int (*func)(void))
+unsigned test_func(const char *name, int (*func)(void))
 {
 	Serial.print(name);
 	Serial.print(" ...");
 	reset_bogus_allocator();
-	int fail = func();
+	unsigned fail = func();
 	Serial.println(fail ? " FAIL!" : " ok.");
 	return fail;
 }
@@ -240,17 +239,4 @@ void reset_bogus_allocator(void)
 			bogus_allocator_chunks_in_use[i] = false;
 		}
 	}
-}
-
-void oom_injecting_init(void)
-{
-	stdlib_malloc = bogus_malloc;
-	stdlib_free = bogus_free;
-
-	oom_injecting_memset = diy_memset;
-	oom_injecting_memcpy = deque_memmove;
-
-	oom_injecting_errlog_s = errlog_s;
-	oom_injecting_errlog_z = errlog_z;
-	oom_injecting_errlog_eol = errlog_eol;
 }

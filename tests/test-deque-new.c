@@ -2,11 +2,12 @@
 /* test-deque-new.c */
 /* Copyright (C) 2016, 2019 Eric Herman <eric@freesa.org> */
 
-#include "test-deque.h"
+#include "deque.h"
+#include "echeck.h"
 
-int test_deque_new()
+unsigned test_deque_new()
 {
-	int failures = 0;
+	unsigned failures = 0;
 	deque_s *deque;
 
 	deque = deque_new();
@@ -22,4 +23,4 @@ int test_deque_new()
 	return failures;
 }
 
-TEST_DEQUE_MAIN(test_deque_new())
+ECHECK_TEST_MAIN(test_deque_new)

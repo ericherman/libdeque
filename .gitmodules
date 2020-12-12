@@ -1,6 +1,3 @@
 [submodule "submodules/libecheck"]
 	path = submodules/libecheck
 	url = https://github.com/ericherman/libecheck.git
-[submodule "submodules/context-alloc"]
-	path = submodules/context-alloc
-	url = https://github.com/ericherman/context-alloc.git

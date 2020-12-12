@@ -2,12 +2,13 @@
 /* test-push-pop.c */
 /* Copyright (C) 2016, 2019, 2020 Eric Herman <eric@freesa.org> */
 
-#include "test-deque.h"
+#include "deque.h"
+#include "echeck.h"
 
-int test_deque_push_pop(void)
+unsigned test_deque_push_pop(void)
 {
 	size_t i;
-	int failures = 0;
+	unsigned failures = 0;
 	deque_s *deque;
 
 	deque = deque_new();
@@ -62,4 +63,4 @@ int test_deque_push_pop(void)
 	return failures;
 }
 
-TEST_DEQUE_MAIN(test_deque_push_pop())
+ECHECK_TEST_MAIN(test_deque_push_pop)

@@ -2,11 +2,12 @@
 /* test-peek.c */
 /* Copyright (C) 2020 Eric Herman <eric@freesa.org> */
 
-#include "test-deque.h"
+#include "deque.h"
+#include "echeck.h"
 
-int test_peek(void)
+unsigned test_peek(void)
 {
-	int failures = 0;
+	unsigned failures = 0;
 	deque_s *deque;
 
 	deque = deque_new();
@@ -72,4 +73,4 @@ int test_peek(void)
 	return failures;
 }
 
-TEST_DEQUE_MAIN(test_peek())
+ECHECK_TEST_MAIN(test_peek)

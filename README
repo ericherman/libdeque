@@ -123,6 +123,18 @@ git clone -o upstream https://github.com/ericherman/libdeque.git &&
  git submodule foreach --recursive git clean -dxf
 
 
+Test Coverage
+-------------
+autoreconf -iv &&
+ ./configure --enable-debug &&
+ make &&
+ make check &&
+ lcov --capture --directory src --output-file coverage.info &&
+ genhtml coverage.info --output-directory coverage_html &&
+ ${BROWSER} ./coverage_html/src/deque.c.gcov.html
+
+
+
 Building on linux from a release tar
 --------
 tar xfz /path/to/libdeque-$VERSION.tar.gz
@@ -134,6 +146,9 @@ sudo ldconfig
 
 Packaging
 ---------
+Typically git submodules are the way to go, but you can use autotools
+if you wish:
+
 autoreconf -iv &&
  ./configure &&
  make &&

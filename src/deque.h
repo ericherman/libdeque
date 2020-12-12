@@ -26,14 +26,8 @@ Deque_begin_C_functions
  * freesting headers are safe to include
  */
 #include <stddef.h>		/* size_t */
-/*
- * pointer to the memmove function which is part of the hosted standard C
- * library, but may not be available in freestanding environments:
- */
-extern void *(*deque_memmove)(void *dest, const void *src, size_t n);
-
 /* forward declaration of the deque type */
-struct deque;
+    struct deque;
 typedef struct deque deque_s;
 
 /* passed parameter functions */
@@ -70,17 +64,13 @@ struct deque {
 	int (*for_each)(deque_s *d, deque_iterator_func func, void *context);
 };
 
-#ifdef ARDUINO
-#include "context-alloc.h"
-#else
-#include <context-alloc.h>
-#endif
+struct eembed_allocator;	/* eembed.h */
+
 /* constructors */
 /* uses libc malloc and free */
 deque_s *deque_new(void);
 
-deque_s *deque_new_custom_allocator(context_malloc_func mfunc,
-				    context_free_func mfree, void *mcontext);
+deque_s *deque_new_custom_allocator(struct eembed_allocator *ea);
 
 /* this is a size-bounded deque, it is recommended that at least 256 bytes
  * extra is provided for the deque struct and opaque data */

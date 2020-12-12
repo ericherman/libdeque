@@ -2,26 +2,26 @@
 /* test-out-of-memory.c */
 /* Copyright (C) 2016, 2019, 2020 Eric Herman <eric@freesa.org> */
 
-#include "test-deque.h"
-#include "oom-injecting-malloc.h"
+#include "deque.h"
+#include "echeck.h"
 
-int test_out_of_memory_push(unsigned long malloc_fail_bitmask)
+unsigned test_out_of_memory_push(unsigned long malloc_fail_bitmask)
 {
-	struct echeck_log *elog = echeck_default_log;
-	int failures = 0;
+	struct eembed_log *elog = eembed_err_log;
+	unsigned failures = 0;
 	int err = 0;
 	size_t i;
-	context_malloc_func ctx_alloc = oom_injecting_malloc;
-	context_free_func ctx_free = oom_injecting_free;
-	oom_injecting_context_s mctx;
+	struct eembed_allocator *real = eembed_global_allocator;
+	struct eembed_allocator wrap;
+	struct echeck_err_injecting_context mctx;
 	deque_s *deque;
 	deque_s *rv;
 
-	oom_injecting_context_init(&mctx);
+	echeck_err_injecting_allocator_init(&wrap, real, &mctx, elog);
 
 	mctx.attempts_to_fail_bitmask = malloc_fail_bitmask;
 
-	deque = deque_new_custom_allocator(ctx_alloc, ctx_free, &mctx);
+	deque = deque_new_custom_allocator(&wrap);
 	if (!deque) {
 		++err;
 		if (!malloc_fail_bitmask) {
@@ -89,9 +89,9 @@ end_test_out_of_memory:
 	return failures;
 }
 
-int test_out_of_memory(void)
+unsigned test_out_of_memory(void)
 {
-	int failures = 0;
+	unsigned failures = 0;
 
 	failures += test_out_of_memory_push(0);
 	failures += test_out_of_memory_push(1UL << 0);
@@ -109,4 +109,4 @@ int test_out_of_memory(void)
 	return failures;
 }
 
-TEST_DEQUE_MAIN_IF(1, test_out_of_memory())
+ECHECK_TEST_MAIN(test_out_of_memory)

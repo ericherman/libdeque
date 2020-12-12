@@ -2,8 +2,8 @@
 # Copyright (C) 2016, 2019, 2020 Eric Herman <eric@freesa.org>
 
 if DEBUG
+# -fsanitize=address,leak,undefined
 BUILD_TYPE_CFLAGS=-ggdb -O0 \
-	-fsanitize=address,leak,undefined \
 	-fno-inline-small-functions \
 	-fkeep-inline-functions \
 	-fkeep-static-functions \
@@ -18,19 +18,15 @@ AM_CFLAGS=-std=c89 \
 	-Wall -Wextra -Wpedantic -Werror \
 	$(BUILD_TYPE_CFLAGS) \
 	-I./src \
-	-I./submodules/context-alloc/src \
-	-I./submodules/context-alloc/util \
 	-I./submodules/libecheck/src \
 	-pipe
 
 AM_LDFLAGS=$(BUILD_TYPE_LDFLAGS)
 
 lib_LTLIBRARIES=libdeque.la
-libdeque_la_SOURCES=src/deque.c \
-		submodules/context-alloc/src/context-alloc.c
+libdeque_la_SOURCES=src/deque.c submodules/libecheck/src/eembed.c
 
-include_HEADERS=src/deque.h \
-		submodules/context-alloc/src/context-alloc.h
+include_HEADERS=src/deque.h submodules/libecheck/src/eembed.h
 
 TESTS=$(check_PROGRAMS)
 check_PROGRAMS=\
@@ -46,9 +42,6 @@ T_LDADD=libdeque.la
 
 TEST_COMMON_SOURCES=\
  src/deque.h \
- tests/test-deque.h \
- submodules/context-alloc/util/oom-injecting-malloc.h \
- submodules/context-alloc/util/oom-injecting-malloc.c \
  submodules/libecheck/src/echeck.h \
  submodules/libecheck/src/echeck.c
 
@@ -78,14 +71,10 @@ test_out_of_memory_LDADD=$(T_LDADD)
 ACLOCAL_AMFLAGS=-I m4 --install
 
 EXTRA_DIST=COPYING.LESSER \
- submodules/context-alloc/COPYING \
- submodules/context-alloc/COPYING.LESSER \
- submodules/context-alloc/src/context-alloc.h \
- submodules/context-alloc/src/context-alloc.c \
- submodules/context-alloc/util/oom-injecting-malloc.h \
- submodules/context-alloc/util/oom-injecting-malloc.c \
  submodules/libecheck/COPYING \
  submodules/libecheck/COPYING.LESSER \
+ submodules/libecheck/src/eembed.h \
+ submodules/libecheck/src/eembed.c \
  submodules/libecheck/src/echeck.h \
  submodules/libecheck/src/echeck.c
 

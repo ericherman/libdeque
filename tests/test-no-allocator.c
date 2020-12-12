@@ -2,21 +2,23 @@
 /* test-custom-allocator.c */
 /* Copyright (C) 2016, 2019 Eric Herman <eric@freesa.org> */
 
-#include "test-deque.h"
+#include "deque.h"
+#include "echeck.h"
 
 #define BYTES_LEN 1000
 
 void *deque_no_alloc(void *context, size_t size);
 
-int test_deque_new_no_allocator(void)
+unsigned test_deque_new_no_allocator(void)
 {
-	int failures = 0;
+	unsigned failures = 0;
 	deque_s *deque;
 	unsigned char bytes[BYTES_LEN];
 	size_t bytes_len = BYTES_LEN;
+	struct eembed_allocator *nea = eembed_null_allocator;
 	void *foo;
 
-	foo = deque_no_alloc(NULL, 1);
+	foo = nea->malloc(nea, 1);
 	failures += check_ptr(NULL, foo);
 
 	deque = deque_new_no_allocator(NULL, 0);
@@ -61,4 +63,4 @@ int test_deque_new_no_allocator(void)
 	return failures;
 }
 
-TEST_DEQUE_MAIN(test_deque_new_no_allocator())
+ECHECK_TEST_MAIN(test_deque_new_no_allocator)
