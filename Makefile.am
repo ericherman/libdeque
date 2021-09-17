@@ -15,7 +15,7 @@ BUILD_TYPE_LDFLAGS=
 endif
 
 AM_CFLAGS=-std=c89 \
-	-Wall -Wextra -Wpedantic -Werror \
+	-Wall -Wextra -Wpedantic -Wcast-qual -Wc++-compat -Werror \
 	$(BUILD_TYPE_CFLAGS) \
 	-I./src \
 	-I./submodules/libecheck/src \

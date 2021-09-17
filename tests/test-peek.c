@@ -5,6 +5,11 @@
 #include "deque.h"
 #include "echeck.h"
 
+#ifndef Check_v_str
+#define Check_v_str(ptr, str, msg) \
+	check_str_m((const char *)ptr, str, msg)
+#endif
+
 unsigned test_peek(void)
 {
 	unsigned failures = 0;
@@ -26,38 +31,38 @@ unsigned test_peek(void)
 
 	failures += check_size_t(deque->size(deque), 3);
 
-	failures += check_str_m(deque->peek_top(deque, 0), "tri", "top 0 1");
-	failures += check_str_m(deque->peek_top(deque, 1), "due", "top 1 1");
-	failures += check_str_m(deque->peek_top(deque, 2), "uno", "top 2 1");
-	failures += check_str_m(deque->peek_top(deque, 3), NULL, "top 3 1");
+	failures += Check_v_str(deque->peek_top(deque, 0), "tri", "top 0 1");
+	failures += Check_v_str(deque->peek_top(deque, 1), "due", "top 1 1");
+	failures += Check_v_str(deque->peek_top(deque, 2), "uno", "top 2 1");
+	failures += Check_v_str(deque->peek_top(deque, 3), NULL, "top 3 1");
 
-	failures += check_str_m(deque->peek_bottom(deque, 0), "uno", "bot 0 1");
-	failures += check_str_m(deque->peek_bottom(deque, 1), "due", "bot 1 1");
-	failures += check_str_m(deque->peek_bottom(deque, 2), "tri", "bot 2 1");
-	failures += check_str_m(deque->peek_bottom(deque, 3), NULL, "bot 3 1");
+	failures += Check_v_str(deque->peek_bottom(deque, 0), "uno", "bot 0 1");
+	failures += Check_v_str(deque->peek_bottom(deque, 1), "due", "bot 1 1");
+	failures += Check_v_str(deque->peek_bottom(deque, 2), "tri", "bot 2 1");
+	failures += Check_v_str(deque->peek_bottom(deque, 3), NULL, "bot 3 1");
 
-	failures += check_str_m(deque->peek_top(deque, 0), "tri", "top 0 2");
-	failures += check_str_m(deque->peek_bottom(deque, 0), "uno", "bot 0 2");
+	failures += Check_v_str(deque->peek_top(deque, 0), "tri", "top 0 2");
+	failures += Check_v_str(deque->peek_bottom(deque, 0), "uno", "bot 0 2");
 
 	deque->pop(deque);
 	failures += check_size_t(deque->size(deque), 2);
 
-	failures += check_str_m(deque->peek_top(deque, 0), "due", "top 0 3");
-	failures += check_str_m(deque->peek_top(deque, 1), "uno", "top 1 3");
-	failures += check_str_m(deque->peek_top(deque, 2), NULL, "top 2 3");
+	failures += Check_v_str(deque->peek_top(deque, 0), "due", "top 0 3");
+	failures += Check_v_str(deque->peek_top(deque, 1), "uno", "top 1 3");
+	failures += Check_v_str(deque->peek_top(deque, 2), NULL, "top 2 3");
 
-	failures += check_str_m(deque->peek_bottom(deque, 0), "uno", "bot 0 3");
-	failures += check_str_m(deque->peek_bottom(deque, 1), "due", "bot 1 3");
-	failures += check_str_m(deque->peek_bottom(deque, 2), NULL, "bot 2 3");
+	failures += Check_v_str(deque->peek_bottom(deque, 0), "uno", "bot 0 3");
+	failures += Check_v_str(deque->peek_bottom(deque, 1), "due", "bot 1 3");
+	failures += Check_v_str(deque->peek_bottom(deque, 2), NULL, "bot 2 3");
 
 	deque->pop(deque);
 
 	failures += check_size_t(deque->size(deque), 1);
 
-	failures += check_str_m(deque->peek_top(deque, 0), "uno", "top 0 4");
-	failures += check_str_m(deque->peek_top(deque, 1), NULL, "top 1 4");
-	failures += check_str_m(deque->peek_bottom(deque, 0), "uno", "bot 0 4");
-	failures += check_str_m(deque->peek_bottom(deque, 1), NULL, "bot 1 4");
+	failures += Check_v_str(deque->peek_top(deque, 0), "uno", "top 0 4");
+	failures += Check_v_str(deque->peek_top(deque, 1), NULL, "top 1 4");
+	failures += Check_v_str(deque->peek_bottom(deque, 0), "uno", "bot 0 4");
+	failures += Check_v_str(deque->peek_bottom(deque, 1), NULL, "bot 1 4");
 
 	deque->pop(deque);
 
