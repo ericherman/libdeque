@@ -32,6 +32,7 @@ TESTS=$(check_PROGRAMS)
 check_PROGRAMS=\
  test-deque-new \
  test-push-pop \
+ test-push-pop-grow \
  test-peek \
  test-iteration \
  test-custom-allocator \
@@ -50,6 +51,9 @@ test_deque_new_LDADD=$(T_LDADD)
 
 test_push_pop_SOURCES=$(TEST_COMMON_SOURCES) tests/test-push-pop.c
 test_push_pop_LDADD=$(T_LDADD)
+
+test_push_pop_grow_SOURCES=$(TEST_COMMON_SOURCES) tests/test-push-pop-grow.c
+test_push_pop_grow_LDADD=$(T_LDADD)
 
 test_peek_SOURCES=$(TEST_COMMON_SOURCES) tests/test-peek.c
 test_peek_LDADD=$(T_LDADD)
@@ -100,6 +104,9 @@ vg-test-deque-new: test-deque-new
 vg-test-push-pop: test-push-pop
 	./libtool --mode=execute valgrind -q ./test-push-pop
 
+vg-test-push-pop-grow: test-push-pop-grow
+	./libtool --mode=execute valgrind -q ./test-push-pop-grow
+
 vg-test-peek: test-peek
 	./libtool --mode=execute valgrind -q ./test-peek
 
@@ -123,4 +130,5 @@ valgrind: \
 	vg-test-out-of-memory \
 	vg-test-peek \
 	vg-test-iteration \
-	vg-test-push-pop
+	vg-test-push-pop \
+	vg-test-push-pop-grow

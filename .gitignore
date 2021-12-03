@@ -38,6 +38,7 @@ test-no-allocator
 test-out-of-memory
 test-peek
 test-push-pop
+test-push-pop-grow
 
 ################
 # autoreconf files

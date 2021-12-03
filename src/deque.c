@@ -118,12 +118,13 @@ static deque_s *deque_push(deque_s *deque, void *user_data)
 			size_t pos_shift = Deque_default_unshift_space;
 			void **old_space = d->data_space;
 			struct eembed_allocator *ea = d->ea;
+			size_t old_size = sizeof(void *) * old_space_len;
 			void **new_space = (void **)ea->malloc(ea, size);
 			if (!new_space) {
 				return NULL;
 			}
-			eembed_memcpy(new_space + pos_shift, old_space,
-				      old_space_len);
+			eembed_memmove(&new_space[pos_shift], old_space,
+				       old_size);
 			ea->free(ea, old_space);
 			d->data_space = new_space;
 			d->data_space_len = new_space_len;
@@ -189,8 +190,8 @@ static deque_s *deque_unshift(deque_s *deque, void *user_data)
 			if (!new_space) {
 				return NULL;
 			}
-			eembed_memcpy(new_space + pos_shift, old_space,
-				      old_size);
+			eembed_memmove(&new_space[pos_shift], old_space,
+				       old_size);
 
 			ea->free(ea, old_space);
 			d->data_space = new_space;
