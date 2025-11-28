@@ -14,7 +14,9 @@ BUILD_TYPE_CFLAGS=-ggdb -O2 -DNDEBUG -Wno-unused-parameter -fomit-frame-pointer
 BUILD_TYPE_LDFLAGS=
 endif
 
-AM_CFLAGS=-std=c89 \
+STD_C_CFLAGS ?= -std=gnu89
+
+AM_CFLAGS=$(STD_C_CFLAGS) \
 	-Wall -Wextra -Wpedantic -Wcast-qual -Wc++-compat -Werror \
 	$(BUILD_TYPE_CFLAGS) \
 	-I./src \
