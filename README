@@ -1,6 +1,7 @@
-The libdeque is a pure ANSI C89 compatible object oriented library for
-double-ended queues and stacks.  The term "deque" can be thought of as
-an abbreviation of "Double-Ended QUEue." Like a deck of cards, one may
+The libdeque is a library for double-ended queues and stacks.
+
+The term "deque" (pronounced like "deck") can be thought of as an
+abbreviation of "Double-Ended QUEue".  Like a deck of cards, one may
 add to (or deal from) the top or bottom.
 
 Inspired by: Donald Knuth.
@@ -15,88 +16,87 @@ Include the header file:
 
 	#include <deque.h>
 
-New instaces are typically created with a call to the "deque_new" function:
+New instances are typically created with a call to the "deque_new" function:
 
-        deque_s *deque = deque_new();
-
-Instead, if needed, a custom allocator can be provided:
-
-	deque_s *deque;
-	deque = deque_new_custom_allocator(myalloc, myfree, mycontext);
+	struct deque *q = deque_new();
 
 Or a size-bounded deque can be constructed from a byte array:
 
-	unsigned char bytes[1024];
-	deque_s *deque;
-	deque = deque_new_no_allocator(bytes, 1024);
+	unsigned char bytes[1000];
+	struct deque *q = deque_new_no_allocator(bytes, 1000);
 
-(The space for the deque struct and its opaque internal data are
-allocated from the byte array which is passed in. As such it's good to
-provide an extra 256 bytes to accomodate these.)
+The space for the deque structure is allocated from the byte array
+which is passed in. As such it's good to provide at least 88 extra
+bytes.
+
+Or even, if needed, a custom allocator can be provided:
+
+	struct eembed_allocator *ea = my_custom_allocator();
+	struct deque *q = deque_new_custom_allocator(ea);
+
 
 Items can be added to either end of the deque using the "push" and
-"unshift" member functions. Items can be remonved from either end of the
+"unshift" member functions. Items can be removed from either end of the
 deque using the "pop" and "shift" member functions. Each of these
 functions has two parameters, a "this" pointer, and a "void *" for the
 data to be added:
 
 	/* add items to the end of queue (or top of stack): */
-	deque->push(deque, "foo");
-	deque->push(deque, "bar");
-	deque->push(deque, "baz");
+	deque_push(q, "foo");
+	deque_push(q, "bar");
+	deque_push(q, "baz");
 
 	/* remove item from front of queue (or bottom of stack): */
-	char *foo = deque->shift(deque);
+	char *foo = deque_shift(q);
 
 	/* remove items from end of queue (or top of stack): */
-	char *baz = deque->pop(deque);
+	char *baz = deque_pop(q);
 
 	/* prepend items to queue (or bottom of stack): */
-	deque->unshift(deque, "butt-in");
+	deque_unshift(q, "butt-in");
 
 Additional member functions are provided which do not change the state
-of the deque, but give some information about the currect state. These
+of the deque, but give some information about the correct state. These
 functions are "size", "peek_top", and "peek_bottom", which can be used
 for external iteration:
 
 	/* the number of items in the of the deque */
-	int size = deque->size(deque);
+	int size = deque_size(q);
 
 	/* pointer to data at the end of the queue (or top of the stack) */
-	void *foo = deque->peek_top(deque, 0);
+	void *foo = deque_peek_top(q, 0);
 
 	/* pointer to data 2 in from the end of the queue */
-	void *bar = deque->peek_top(deque, 2);
+	void *bar = deque_peek_top(q, 2);
 
 	/* pointer to data at the front of the queue (or bottom of the stack) */
-	void *baz = deque->peek_bottom(deque, 0);
+	void *baz = deque_peek_bottom(q, 0);
 
 	/* pointer to data 3 behind the front of the queue */
-	void *val = deque->peek_bottom(deque, 3);
+	void *val = deque_peek_bottom(q, 3);
 
-Additionally, there is a "for_each" method which takes a deque_iterator_func
+Additionally, the "deque_for_each" function takes a deque_iterator_func
 function pointer which is defined as:
 
-typedef int (*deque_iterator_func)(deque_s *d, void *each, void *context);
+typedef int (*deque_iterator_func)(struct deque *d, void *each, void *context);
 
 And can be called like:
 
-	int x = deque->for_each(deque, my_func, my_context);
+	int x = deque_for_each(q, my_func, my_context);
 
-The "for_each" function handles the iteration internally. It can be halted
-early if the "my_func" returns a non-zero value.
+The "deque_for_each" function handles the iteration internally.
+It can be halted early if the "my_func" returns a non-zero value.
 
-Instances can be freed using the "deque_free" function. Of course, if
-the instance was created with a custom allocation and free functions,
-the deque_free function will use the function pointer which was
-provided:
+Instances can be freed using the "deque_free" function. Of course,
+if the instance was created with a custom allocator the deque_free
+function will use the provided allocator:
 
 	/* free the deque memory and all memory deque allocated */
-	deque_free(deque);
+	deque_free(q);
 
 Compile with the "-ldeque" lib:
 
-        gcc -o foo foo.c -ldeque
+	gcc -o foo foo.c -ldeque
 
 
 Dependencies
@@ -131,7 +131,7 @@ autoreconf -iv &&
  make check &&
  lcov --capture --directory src --output-file coverage.info &&
  genhtml coverage.info --output-directory coverage_html &&
- ${BROWSER} ./coverage_html/src/deque.c.gcov.html
+ sensible-browser ./coverage_html/index.html
 
 
 

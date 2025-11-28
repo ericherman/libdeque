@@ -9,45 +9,45 @@ unsigned test_deque_push_pop_grow(void)
 {
 	size_t i, limit;
 	unsigned failures = 0;
-	deque_s *deque;
+	struct deque *d;
 	char msg[40];
 	char msg2[40];
 	const char *s;
 
-	deque = deque_new();
-	if (!deque) {
-		check_int(deque != NULL ? 1 : 0, 1);
+	d = deque_new();
+	if (!d) {
+		check_int(d != NULL ? 1 : 0, 1);
 		++failures;
 		return failures;
 	}
 
-	failures += check_size_t_m(deque->size(deque), 0, "initial size");
+	failures += check_size_t_m(deque_size(d), 0, "initial size");
 
-	failures += check_ptr_m(deque->pop(deque), NULL, "pop size 0");
+	failures += check_ptr_m(deque_pop(d), NULL, "pop size 0");
 
 	limit = 256;
 	for (i = 0; i < limit; ++i) {
 		eembed_ulong_to_str(msg, 40, i);
-		deque->push(deque, "foo");
-		s = (const char *)deque->peek_bottom(deque, i);
+		deque_push(d, "foo");
+		s = (const char *)deque_peek_bottom(d, i);
 		failures += check_str_m(s, "foo", msg);
 
 		if (i > 10) {
 			eembed_strcat(msg, "_");
 			eembed_ulong_to_str(msg2, 40, 10);
 			eembed_strcat(msg, msg2);
-			s = (const char *)deque->peek_bottom(deque, 10);
+			s = (const char *)deque_peek_bottom(d, 10);
 			failures += check_str_m(s, "foo", msg);
 		}
 	}
 	for (i = 0; i < limit; ++i) {
 		eembed_ulong_to_str(msg, 40, i);
-		s = (const char *)deque->shift(deque);
+		s = (const char *)deque_shift(d);
 		failures += check_str_m(s, "foo", msg);
 	}
-	failures += check_size_t_m(deque->size(deque), 0, "end size");
+	failures += check_size_t_m(deque_size(d), 0, "end size");
 
-	deque_free(deque);
+	deque_free(d);
 	return failures;
 }
 

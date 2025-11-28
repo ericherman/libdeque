@@ -14,15 +14,15 @@ unsigned test_out_of_memory_push(unsigned long malloc_fail_bitmask)
 	struct eembed_allocator *real = eembed_global_allocator;
 	struct eembed_allocator wrap;
 	struct echeck_err_injecting_context mctx;
-	deque_s *deque;
-	deque_s *rv;
+	struct deque *d;
+	struct deque *rv;
 
 	echeck_err_injecting_allocator_init(&wrap, real, &mctx, elog);
 
 	mctx.attempts_to_fail_bitmask = malloc_fail_bitmask;
 
-	deque = deque_new_custom_allocator(&wrap);
-	if (!deque) {
+	d = deque_new_custom_allocator(&wrap);
+	if (!d) {
 		++err;
 		if (!malloc_fail_bitmask) {
 			elog->append_s(elog, __FILE__);
@@ -36,7 +36,7 @@ unsigned test_out_of_memory_push(unsigned long malloc_fail_bitmask)
 	}
 
 	for (i = 0; i < 5; ++i) {
-		rv = deque->push(deque, NULL);
+		rv = deque_push(d, NULL);
 		if (!rv) {
 			++err;
 			if (!malloc_fail_bitmask) {
@@ -48,7 +48,7 @@ unsigned test_out_of_memory_push(unsigned long malloc_fail_bitmask)
 				++failures;
 			}
 		}
-		rv = deque->unshift(deque, NULL);
+		rv = deque_unshift(d, NULL);
 		if (!rv) {
 			++err;
 			if (!malloc_fail_bitmask) {
@@ -63,7 +63,7 @@ unsigned test_out_of_memory_push(unsigned long malloc_fail_bitmask)
 	}
 
 	if (!err && malloc_fail_bitmask) {
-		if (mctx.allocs < 3) {
+		if (mctx.allocs < 2) {
 			elog->append_s(elog, __FILE__);
 			elog->append_s(elog, ":");
 			elog->append_l(elog, __LINE__);
@@ -80,7 +80,7 @@ unsigned test_out_of_memory_push(unsigned long malloc_fail_bitmask)
 	}
 
 end_test_out_of_memory:
-	deque_free(deque);
+	deque_free(d);
 
 	failures += check_unsigned_int_m(mctx.frees, mctx.allocs, "alloc/free");
 	failures +=

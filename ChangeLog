@@ -1,3 +1,32 @@
+2025-11-28  Eric Herman <eric@freesa.org>
+
+	Version bump 5.0.0 -> 6.0.0
+
+	Remove the Object Oriented interface around the opaque C
+	structure, as there was never polymorphism in use; it did not
+	make the code clearer nor "cleaner", and it added un-needed
+	de-referencing overhead.
+
+	Use the C structure directly.
+
+	Update all tests to use the direct interface.
+
+	Ensure pointers are zeroed-out when popped/shifted.
+
+	* configure.ac: version bump to 6.0.0
+	* README: reflect the new direct C-style interface
+	* src/deque.h: reflect the new direct C interface
+	* src/deque.c: rework for the unwrapping of OO interface
+	* tests/test-custom-allocator.c: use the direct interface
+	* tests/test-deque-new.c: use the direct interface
+	* tests/test-iteration.c: use the direct interface
+	* tests/test-no-allocator.c: use the direct interface
+	* tests/test-out-of-memory.c: use the direct interface
+	* tests/test-peek.c: use the direct interface
+	* tests/test-push-pop-grow.c: use the direct interface
+	* tests/test-push-pop.c: use the direct interface
+	* Makefile.am: c89 -> gnu89 (newer eembed requires snprintf)
+
 2020-11-15  Eric Herman <eric@freesa.org>
 
 	Improve support for Freestanding environments

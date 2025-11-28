@@ -8,7 +8,7 @@
 unsigned test_deque_custom_allocator()
 {
 	unsigned failures = 0;
-	deque_s *deque = NULL;
+	struct deque *d = NULL;
 	struct echeck_err_injecting_context ctx;
 	struct eembed_allocator wrap;
 	struct eembed_allocator *real = eembed_global_allocator;
@@ -16,39 +16,39 @@ unsigned test_deque_custom_allocator()
 
 	echeck_err_injecting_allocator_init(&wrap, real, &ctx, elog);
 
-	deque = deque_new_custom_allocator(&wrap);
-	if (!deque) {
-		check_int(deque != NULL ? 1 : 0, 1);
+	d = deque_new_custom_allocator(&wrap);
+	if (!d) {
+		check_int(d != NULL ? 1 : 0, 1);
 		return 1;
 	}
 
-	failures += check_size_t_m(deque->size(deque), 0, "initial size");
+	failures += check_size_t_m(deque_size(d), 0, "initial size");
 
-	failures += check_ptr_m(deque->pop(deque), NULL, "pop size 0");
+	failures += check_ptr_m(deque_pop(d), NULL, "pop size 0");
 
-	deque->push(deque, "one");
-	deque->push(deque, "two");
-	deque->push(deque, "three");
+	deque_push(d, "one");
+	deque_push(d, "two");
+	deque_push(d, "three");
 
-	failures += check_size_t_m(deque->size(deque), 3, "size A");
+	failures += check_size_t_m(deque_size(d), 3, "size A");
 
-	deque->unshift(deque, "zero");
+	deque_unshift(d, "zero");
 
-	failures += check_size_t_m(deque->size(deque), 4, "size B");
+	failures += check_size_t_m(deque_size(d), 4, "size B");
 
-	failures += check_str_m((char *)deque->pop(deque), "three", "pop1");
+	failures += check_str_m((char *)deque_pop(d), "three", "pop1");
 
-	deque->push(deque, "four");
+	deque_push(d, "four");
 
-	failures += check_str_m((char *)deque->shift(deque), "zero", "shift1");
-	failures += check_str_m((char *)deque->shift(deque), "one", "shift2");
+	failures += check_str_m((char *)deque_shift(d), "zero", "shift1");
+	failures += check_str_m((char *)deque_shift(d), "one", "shift2");
 
-	failures += check_str_m((char *)deque->pop(deque), "four", "pop2");
-	failures += check_str_m((char *)deque->pop(deque), "two", "pop3");
+	failures += check_str_m((char *)deque_pop(d), "four", "pop2");
+	failures += check_str_m((char *)deque_pop(d), "two", "pop3");
 
-	failures += check_size_t_m(deque->size(deque), 0, "size C");
+	failures += check_size_t_m(deque_size(d), 0, "size C");
 
-	deque_free(deque);
+	deque_free(d);
 
 	failures += check_unsigned_int_m(ctx.allocs, ctx.frees, "frees,allocs");
 	failures += check_unsigned_int_m(ctx.alloc_bytes > 0, 1, "bytes > 0");

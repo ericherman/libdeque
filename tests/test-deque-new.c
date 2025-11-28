@@ -8,18 +8,18 @@
 unsigned test_deque_new()
 {
 	unsigned failures = 0;
-	deque_s *deque;
+	struct deque *d;
 
-	deque = deque_new();
+	d = deque_new();
 
-	if (!deque) {
-		check_int(deque != NULL ? 1 : 0, 1);
+	if (!d) {
+		check_int(d != NULL ? 1 : 0, 1);
 		return 1;
 	}
 
-	failures += check_unsigned_int_m(deque->size(deque), 0, "deque_size");
+	failures += check_unsigned_int_m(deque_size(d), 0, "deque_size");
 
-	deque_free(deque);
+	deque_free(d);
 	return failures;
 }
 

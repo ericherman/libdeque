@@ -3,21 +3,21 @@
 
 if DEBUG
 # -fsanitize=address,leak,undefined
-BUILD_TYPE_CFLAGS=-ggdb -O0 \
+BUILD_TYPE_CFLAGS=-g -O0 \
 	-fno-inline-small-functions \
 	-fkeep-inline-functions \
 	-fkeep-static-functions \
 	--coverage
 BUILD_TYPE_LDFLAGS=--coverage
 else
-BUILD_TYPE_CFLAGS=-ggdb -O2 -DNDEBUG -Wno-unused-parameter -fomit-frame-pointer
+BUILD_TYPE_CFLAGS=-g -O2 -DNDEBUG -Wno-unused-parameter -fomit-frame-pointer
 BUILD_TYPE_LDFLAGS=
 endif
 
 STD_C_CFLAGS ?= -std=gnu89
 
 AM_CFLAGS=$(STD_C_CFLAGS) \
-	-Wall -Wextra -Wpedantic -Wcast-qual -Wc++-compat -Werror \
+	-Wall -Wextra -Wcast-qual -Wc++-compat -Werror \
 	$(BUILD_TYPE_CFLAGS) \
 	-I./src \
 	-I./submodules/libecheck/src \
@@ -91,7 +91,7 @@ tidy:
 	$(LINDENT) \
 		-T FILE \
 		-T size_t \
-		-T deque_s \
+		-T deque \
 		`find src tests -name '*.h' -o -name '*.c'` \
 		deque_tests_arduino/deque_tests_arduino.ino
 

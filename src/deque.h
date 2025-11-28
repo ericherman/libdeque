@@ -38,61 +38,84 @@ struct deque_allow_semicolon
 
 Deque_begin_C_declarations;
 #undef Deque_begin_C_declarations
+
 /*
  * freestanding headers are safe to include
  */
-#include <stddef.h>		/* size_t */
-/* forward declaration of the deque type */
-struct deque;
-typedef struct deque deque_s;
+#include <stddef.h>
+#include <limits.h>
+#include <stdint.h>
 
-/* passed parameter functions */
-typedef int (*deque_iterator_func)(deque_s *d, void *each, void *context);
+#ifndef Deque_default_len
+#ifdef __WORDSIZE
+#define Deque_default_len ( 2 * __WORDSIZE )
+#else
+#define Deque_default_len 32
+#endif
+#endif
+
+#ifndef Deque_default_unshift_space
+#define Deque_default_unshift_space(data_space_len) (data_space_len/4)
+#endif
 
 struct deque {
-	void *opaque_data;
-
-	/* add items to the end of queue (or top of stack): */
-	deque_s *(*push)(deque_s *d, void *data);
-
-	/* remove items from end of queue (or top of stack): */
-	void *(*pop)(deque_s *d);
-
-	/* prepend items to queue (or bottom of stack): */
-	deque_s *(*unshift)(deque_s *d, void *data);
-
-	/* remove item from front of queue (or bottom of stack): */
-	void *(*shift)(deque_s *d);
-
-	/* reset the deque to an empty state */
-	void (*clear)(deque_s *d);
-
-	/* pointer to data from the end of the queue, or top of the stack */
-	void *(*peek_top)(deque_s *d, size_t index);
-
-	/* pointer to data from the front of the queue, or bottom of the stack */
-	void *(*peek_bottom)(deque_s *d, size_t index);
-
-	/* return the number of items in the deque */
-	size_t (*size)(deque_s *d);
-
-	/* internal iterator */
-	int (*for_each)(deque_s *d, deque_iterator_func func, void *context);
+	size_t first_pos;
+	size_t end_pos;
+	struct eembed_allocator *ea;
+	union {
+		struct {
+			uint8_t deque_needs_free:1;
+			uint8_t data_space_needs_free:1;
+			uintptr_t reserved:((sizeof(uintptr_t) * CHAR_BIT) - 2);
+		}
+		flags;
+		uintptr_t all_flags;
+	};
+	void *reseverd_for_future_use;
+	size_t data_space_len;
+	void **data_space;
 };
 
-struct eembed_allocator;	/* eembed.h */
+/* passed parameter functions */
+typedef int (*deque_iterator_func)(struct deque *d, void *each, void *context);
 
-/* constructors */
-/* uses libc malloc and free */
-deque_s *deque_new(void);
+/* initialize the deque data_space using the custom allocator */
+struct deque *deque_init(struct deque *d,
+			 void **data_space,
+			 size_t data_space_len, struct eembed_allocator *ea);
 
-deque_s *deque_new_custom_allocator(struct eembed_allocator *ea);
+/* add items to the end of queue (or top of stack): */
+struct deque *deque_push(struct deque *d, void *data);
 
-/* this is a size-bounded deque, it is recommended that at least 256 bytes
- * extra is provided for the deque struct and opaque data */
-deque_s *deque_new_no_allocator(unsigned char *bytes, size_t bytes_len);
+/* remove items from end of queue (or top of stack): */
+void *deque_pop(struct deque *d);
 
-void deque_free(deque_s *d);
+/* prepend items to queue (or bottom of stack): */
+struct deque *deque_unshift(struct deque *d, void *data);
+
+/* remove item from front of queue (or bottom of stack): */
+void *deque_shift(struct deque *d);
+
+/* reset the deque to an empty state */
+void deque_clear(struct deque *d);
+
+/* pointer to data from the end of the queue, or top of the stack */
+void *deque_peek_top(struct deque *d, size_t index);
+
+/* pointer to data from the front of the queue, or bottom of the stack */
+void *deque_peek_bottom(struct deque *d, size_t index);
+
+/* return the number of items in the deque */
+size_t deque_size(struct deque *d);
+
+/* internal iterator */
+int deque_for_each(struct deque *d, deque_iterator_func func, void *context);
+
+struct deque *deque_new(void);
+struct deque *deque_new_custom_allocator(struct eembed_allocator *ea);
+struct deque *deque_new_no_allocator(unsigned char *bytes, size_t bytes_len);
+
+void deque_free(struct deque *d);
 
 Deque_end_C_declarations;
 #undef Deque_end_C_declarations

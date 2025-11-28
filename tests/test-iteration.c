@@ -5,7 +5,7 @@
 #include "deque.h"
 #include "echeck.h"
 
-int func_1(deque_s *d, void *each, void *context)
+int func_1(struct deque *d, void *each, void *context)
 {
 	char *buf = (char *)context;
 	char *val = (char *)each;
@@ -14,7 +14,7 @@ int func_1(deque_s *d, void *each, void *context)
 	return 0;
 }
 
-int func_2(deque_s *d, void *each, void *context)
+int func_2(struct deque *d, void *each, void *context)
 {
 	char *buf = (char *)context;
 	char *val = (char *)each;
@@ -29,31 +29,31 @@ int func_2(deque_s *d, void *each, void *context)
 unsigned test_iteration(void)
 {
 	unsigned failures = 0;
-	deque_s *deque;
+	struct deque *d;
 	char buf[80];
 	int rv;
 
-	deque = deque_new();
-	if (!deque) {
-		check_int(deque != NULL ? 1 : 0, 1);
+	d = deque_new();
+	if (!d) {
+		check_int(d != NULL ? 1 : 0, 1);
 		return 1;
 	}
 
-	deque->push(deque, "uno");
-	deque->push(deque, "due");
-	deque->push(deque, "tri");
+	deque_push(d, "uno");
+	deque_push(d, "due");
+	deque_push(d, "tri");
 
 	buf[0] = '\0';
-	rv = deque->for_each(deque, func_1, buf);
+	rv = deque_for_each(d, func_1, buf);
 	check_int(rv, 0);
 	check_str(buf, "unoduetri");
 
 	buf[0] = '\0';
-	rv = deque->for_each(deque, func_2, buf);
+	rv = deque_for_each(d, func_2, buf);
 	check_int(rv, 1);
 	check_str(buf, "unodue");
 
-	deque_free(deque);
+	deque_free(d);
 	return failures;
 }
 

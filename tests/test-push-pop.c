@@ -9,57 +9,57 @@ unsigned test_deque_push_pop(void)
 {
 	size_t i;
 	unsigned failures = 0;
-	deque_s *deque;
+	struct deque *d;
 
-	deque = deque_new();
-	if (!deque) {
-		check_int(deque != NULL ? 1 : 0, 1);
+	d = deque_new();
+	if (!d) {
+		check_int(d != NULL ? 1 : 0, 1);
 		++failures;
 		return failures;
 	}
 
-	failures += check_size_t_m(deque->size(deque), 0, "initial size");
+	failures += check_size_t_m(deque_size(d), 0, "initial size");
 
-	failures += check_ptr_m(deque->pop(deque), NULL, "pop size 0");
+	failures += check_ptr_m(deque_pop(d), NULL, "pop size 0");
 
-	deque->push(deque, "one");
-	deque->push(deque, "two");
-	deque->push(deque, "three");
+	deque_push(d, "one");
+	deque_push(d, "two");
+	deque_push(d, "three");
 
-	failures += check_size_t_m(deque->size(deque), 3, "size A");
+	failures += check_size_t_m(deque_size(d), 3, "size A");
 
-	deque->unshift(deque, "zero");
+	deque_unshift(d, "zero");
 
-	failures += check_size_t_m(deque->size(deque), 4, "size B");
+	failures += check_size_t_m(deque_size(d), 4, "size B");
 
-	failures += check_str_m((char *)deque->pop(deque), "three", "pop1");
+	failures += check_str_m((char *)deque_pop(d), "three", "pop1");
 
-	deque->push(deque, "four");
+	deque_push(d, "four");
 
-	failures += check_str_m((char *)deque->shift(deque), "zero", "shift1");
-	failures += check_str_m((char *)deque->shift(deque), "one", "shift2");
+	failures += check_str_m((char *)deque_shift(d), "zero", "shift1");
+	failures += check_str_m((char *)deque_shift(d), "one", "shift2");
 
-	failures += check_str_m((char *)deque->pop(deque), "four", "pop2");
-	failures += check_str_m((char *)deque->pop(deque), "two", "pop3");
+	failures += check_str_m((char *)deque_pop(d), "four", "pop2");
+	failures += check_str_m((char *)deque_pop(d), "two", "pop3");
 
 	for (i = 0; i < 100; ++i) {
-		deque->push(deque, "foo");
+		deque_push(d, "foo");
 	}
 	for (i = 0; i < 100; ++i) {
-		deque->pop(deque);
+		deque_pop(d);
 	}
 	for (i = 0; i < 1000; ++i) {
-		deque->unshift(deque, "foo");
+		deque_unshift(d, "foo");
 	}
-	deque->clear(deque);
+	deque_clear(d);
 
-	failures += check_size_t_m(deque->size(deque), 0, "size C");
+	failures += check_size_t_m(deque_size(d), 0, "size C");
 
-	failures += check_str_m((char *)deque->shift(deque), NULL, "shift3");
-	failures += check_ptr_m(deque->unshift(deque, "foo"), deque, "unshift");
-	failures += check_str_m((char *)deque->shift(deque), "foo", "shift4");
+	failures += check_str_m((char *)deque_shift(d), NULL, "shift3");
+	failures += check_ptr_m(deque_unshift(d, "foo"), d, "unshift");
+	failures += check_str_m((char *)deque_shift(d), "foo", "shift4");
 
-	deque_free(deque);
+	deque_free(d);
 	return failures;
 }
 
