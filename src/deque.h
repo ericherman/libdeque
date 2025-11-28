@@ -12,22 +12,38 @@
    ( third edition, Addison-Wesley, 1997. ISBN 0-201-89683-4 )
 */
 
+/* see: bug #65165: extern "C" mishandled in header files */
+/* https://savannah.gnu.org/bugs/?65165 */
 #ifdef __cplusplus
-#define Deque_begin_C_functions extern "C" {
-#define Deque_end_C_functions }
-#else
-#define Deque_begin_C_functions
-#define Deque_end_C_functions
+
+#define Deque_begin_C_declarations \
+extern "C" { \
+struct deque_allow_semicolon
+
+#define Deque_end_C_declarations \
+} \
+struct deque_cpp_allow_semicolon
+
+#endif /* ifdef __cplusplus */
+
+#ifndef Deque_begin_C_declarations
+#define Deque_begin_C_declarations \
+struct deque_allow_semicolon
 #endif
 
-Deque_begin_C_functions
-#undef Deque_begin_C_functions
+#ifndef Deque_end_C_declarations
+#define Deque_end_C_declarations \
+struct deque_allow_semicolon
+#endif
+
+Deque_begin_C_declarations;
+#undef Deque_begin_C_declarations
 /*
- * freesting headers are safe to include
+ * freestanding headers are safe to include
  */
 #include <stddef.h>		/* size_t */
 /* forward declaration of the deque type */
-    struct deque;
+struct deque;
 typedef struct deque deque_s;
 
 /* passed parameter functions */
@@ -78,6 +94,6 @@ deque_s *deque_new_no_allocator(unsigned char *bytes, size_t bytes_len);
 
 void deque_free(deque_s *d);
 
-Deque_end_C_functions
-#undef Deque_end_C_functions
+Deque_end_C_declarations;
+#undef Deque_end_C_declarations
 #endif /* DEQUE_H */
